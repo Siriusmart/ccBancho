@@ -48,23 +48,15 @@ public sealed class PartyJoin : Subcommand {
                     .Split('\n'));
             break;
         case 1:
-            // TODO party broadcast
-            target.MessageLines(
-                Formatter
-                    .BarsWrap(
-                        $"{p.ColoredName} &ehas requested to join your party.\nYou have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eto accept this request.\nAccept the request with /party invite {p.name}")
-                    .Split('\n'));
             p.MessageLines(
                 Formatter
                     .BarsWrap(
                         $"&eJoin request sent. They have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eto accept your request.")
                     .Split('\n'));
+            party.Tell(Formatter.BarsWrap(
+                $"{p.ColoredName} &ehas requested to join your party.\nYou have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eto accept this request.\nAccept the request with /party invite {p.name}"));
             break;
         case 2:
-            // TODO party broadcast
-            target.MessageLines(
-                Formatter.BarsWrap($"{p.ColoredName} &ejoined the party.")
-                    .Split('\n'));
             string[] members = party.Members.Concat(party.Moderators)
                                    .Where(player => player != p)
                                    .Select(player => player.ColoredName)
@@ -73,12 +65,16 @@ public sealed class PartyJoin : Subcommand {
 
             p.MessageLines(
                 Formatter
-                    .BarsWrap($"&eYou have joined {target.ColoredName}'s &eparty{
+                    .BarsWrap(
+                        $"&eYou have joined {target.ColoredName}'s &eparty{
                         (members.Length == 1 ?
                         $" with {Formatter.ListItems(members)}" :
                         string.Empty)
                         }.")
                     .Split('\n'));
+
+            party.TellExcept(
+                p, Formatter.BarsWrap($"{p.ColoredName} &ejoined the party."));
             break;
         case 3:
             p.MessageLines(

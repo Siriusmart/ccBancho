@@ -49,15 +49,13 @@ public sealed class PartyDemote : Subcommand {
                     .Split('\n'));
             break;
         case 3:
-            // TODO party broadcast
-            p.MessageLines(
-                Formatter
-                    .BarsWrap(
-                        $"{target.ColoredName} &ehas been demoted to party member.")
-                    .Split('\n'));
             target.MessageLines(
                 Formatter.BarsWrap($"&eYou have been demoted to party member.")
                     .Split('\n'));
+            party.TellExcept(
+                target,
+                Formatter.BarsWrap(
+                    $"{target.ColoredName} &ehas been demoted to party member."));
             break;
         }
 

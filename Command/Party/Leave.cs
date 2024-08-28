@@ -22,20 +22,19 @@ public sealed class PartyLeave : Subcommand {
 
         switch (party.Remove(p)) {
         case 0:
-            // TODO party broadcast
             p.MessageLines(
                 Formatter.BarsWrap($"You left the party.").Split('\n'));
+            party.Tell($"{p.ColoredName} &eleft the party.");
             break;
         case 1:
-            // TODO party broadcast
             p.MessageLines(
                 Formatter.BarsWrap($"You left an empty party and is disbanded.")
                     .Split('\n'));
             break;
         case 2:
-            // TODO party broadcast
             p.MessageLines(
                 Formatter.BarsWrap($"You left the party.").Split('\n'));
+            party.Tell($"{p.ColoredName} &eleft the party.");
             break;
         case 3:
             throw new Exception("unreachable");

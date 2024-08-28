@@ -28,6 +28,8 @@ public sealed class PartyEntry : Command {
             return typeof(PartyKick);
         case "disband":
             return typeof(PartyDisband);
+        case "setting":
+            return typeof(PartySetting);
         default:
             return null;
         }
@@ -45,7 +47,8 @@ public sealed class PartyEntry : Command {
 &e{Subcommand.FormatText("party",PartyDemote.Name(), PartyDemote.Format())} &7- &b{PartyDemote.Description()}
 &e{Subcommand.FormatText("party",PartyLeave.Name(), PartyLeave.Format())} &7- &b{PartyLeave.Description()}
 &e{Subcommand.FormatText("party",PartyKick.Name(), PartyKick.Format())} &7- &b{PartyKick.Description()}
-&e{Subcommand.FormatText("party",PartyDisband.Name(), PartyDisband.Format())} &7- &b{PartyDisband.Description()}")
+&e{Subcommand.FormatText("party",PartyDisband.Name(), PartyDisband.Format())} &7- &b{PartyDisband.Description()}
+&e{Subcommand.FormatText("party",PartySetting.Name(), PartySetting.Format())} &7- &b{PartySetting.Description()}")
                                .Split("\n"));
             return;
         }

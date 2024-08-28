@@ -65,6 +65,13 @@ public sealed class PartyPromote : Subcommand {
                     .BarsWrap(
                         $"You have been promoted to party leader.\n{p.ColoredName} &eis now a party moderator.")
                     .Split('\n'));
+
+            HashSet<Player> except =
+                new HashSet<Player>(new Player[] { p, target });
+            party.TellExcept(
+                except,
+                Formatter.BarsWrap(
+                    $"{target.ColoredName} been promoted to party leader.\n{p.ColoredName} &eis now a party moderator."));
             break;
         }
 

@@ -31,10 +31,11 @@ public sealed class PartyKick : Subcommand {
 
         switch (party.Remove(target)) {
         case 0:
-            // TODO party broadcast
             target.MessageLines(
                 Formatter.BarsWrap($"&eYou have been kicked from the party.")
                     .Split('\n'));
+            party.Tell(
+                $"{target.ColoredName} &ehas been kicked from the party.");
             break;
         case 1:
         case 2:

@@ -15,18 +15,19 @@ public sealed class PartyDisband : Subcommand {
         Party party = Parties.GetParty(p);
 
         if (party == null) {
-            p.MessageLines(Formatter.BarsWrap("&cYou are not in a party!")
-                               .Split('\n'));
+            p.MessageLines(
+                Formatter.BarsWrap("&cYou are not in a party!").Split('\n'));
             return true;
         }
 
-        if(party.Leader != p) {
-            p.MessageLines(Formatter.BarsWrap("&cOnly the party leader can do this!")
-                               .Split('\n'));
+        if (party.Leader != p) {
+            p.MessageLines(
+                Formatter.BarsWrap("&cOnly the party leader can do this!")
+                    .Split('\n'));
             return true;
         }
 
-        // TODO party broadcast
+        party.Tell(Formatter.BarsWrap($"&eThe party has been disbanded."));
         Parties.Remove(party);
         return true;
     }

@@ -11,10 +11,37 @@ public class Party {
     private Player leader;
 
     public void Message(Player p, string content) {
+        if (Permission(p) < 2 && settings["mute"]) {
+            p.Message("&cParty chat has been muted.");
+            return;
+        }
+
         content = $"&9Party &8> &f{p.name}: {content}";
 
-        foreach(Player recepient in joinOrder) {
+        foreach (Player recepient in joinOrder) {
             recepient.Message(content);
+        }
+    }
+
+    public void Tell(string content) {
+        foreach (Player recepient in joinOrder) {
+            recepient.MessageLines(content.Split('\n'));
+        }
+    }
+
+    public void TellExcept(Player p, string content) {
+        foreach (Player recepient in joinOrder) {
+            if (recepient == p)
+                continue;
+            recepient.MessageLines(content.Split('\n'));
+        }
+    }
+
+    public void TellExcept(HashSet<Player> p, string content) {
+        foreach (Player recepient in joinOrder) {
+            if (p.Contains(recepient))
+                continue;
+            recepient.MessageLines(content.Split('\n'));
         }
     }
 
@@ -50,8 +77,8 @@ public class Party {
         leader = p;
         joinOrder.Add(p);
         settings.Add("allInvite", false);
-        settings.Add("mute", false);
         settings.Add("allowRequest", true);
+        settings.Add("mute", false);
     }
 
     public bool Contains(Player p) {
@@ -61,6 +88,8 @@ public class Party {
     /// less than 0: no cooldown
     /// anything else: seconds
     public long InvitedCooldownRemaining(Player p) {
+        if (p == null)
+            return -1;
         if (invited.ContainsKey(p))
             return InviteCooldown -
                    (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - invited[p]);
@@ -71,6 +100,8 @@ public class Party {
     /// less than 0: no cooldown
     /// anything else: seconds
     public long RequestedCooldownRemaining(Player p) {
+        if (p == null)
+            return -1;
         if (requested.ContainsKey(p))
             return InviteCooldown -
                    (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - requested[p]);
@@ -116,11 +147,8 @@ public class Party {
                 .BarsWrap(
                     $"&eParty invite from {players[1].ColoredName} &ehas expired.")
                 .Split('\n'));
-        players[1].MessageLines(
-            Formatter
-                .BarsWrap(
-                    $"&eParty invite to {players[0].ColoredName} &ehas expired.")
-                .Split('\n'));
+        Tell(Formatter.BarsWrap(
+            $"&eParty invite to {players[0].ColoredName} &ehas expired."));
     }
 
     /// 0: allowRequest is false
@@ -161,11 +189,8 @@ public class Party {
                 .BarsWrap(
                     $"&eParty request from {players[1].ColoredName} &ehas expired.")
                 .Split('\n'));
-        players[1].MessageLines(
-            Formatter
-                .BarsWrap(
-                    $"&eParty request to {players[0].ColoredName} &ehas expired.")
-                .Split('\n'));
+        Tell(Formatter.BarsWrap(
+            $"&eParty request to {players[0].ColoredName} &ehas expired."));
     }
 
     /// 0: not in party

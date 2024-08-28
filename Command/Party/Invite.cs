@@ -45,24 +45,15 @@ public sealed class PartyInvite : Subcommand {
 
         switch (party.Invite(target, p)) {
         case 0:
-            p.MessageLines(
-                Formatter
-                    .BarsWrap(
-                        $"{p.ColoredName} &einvited {target.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eto join the party.")
-                    .Split('\n'));
             target.MessageLines(
                 Formatter
                     .BarsWrap(
                         $"&eYou have been invited to join {p.ColoredName}'s &eparty! \nYou have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eaccept this invite.\nJoin the party with /party join {p.name}")
                     .Split('\n'));
+            party.Tell(Formatter.BarsWrap(
+                $"{p.ColoredName} &einvited {target.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eaccept the invite."));
             break;
         case 1:
-            // TODO party broadcast
-            p.MessageLines(
-                Formatter
-                    .BarsWrap($"{target.ColoredName} &ehas joined the party.")
-                    .Split('\n'));
-
             string[] members = party.Members.Concat(party.Moderators)
                                    .Where(player => player != target)
                                    .Select(player => player.ColoredName)
@@ -77,9 +68,12 @@ public sealed class PartyInvite : Subcommand {
                         string.Empty)
                         }.")
                     .Split('\n'));
+
+            party.TellExcept(target,
+                             Formatter.BarsWrap(
+                                 $"{target.ColoredName} &ejoined the party."));
             break;
         case 2:
-            // TODO party broadcast
             p.MessageLines(
                 Formatter
                     .BarsWrap($"&cThat player is not online at the moment.")
