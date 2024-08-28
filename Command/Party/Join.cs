@@ -31,7 +31,7 @@ public sealed class PartyJoin : Subcommand {
             return true;
         }
 
-        long cooldown = party.RequestedCooldownRemaining(target);
+        long cooldown = party.RequestedCooldownRemaining(p);
         if (cooldown > 0) {
             p.MessageLines(
                 Formatter

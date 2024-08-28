@@ -36,7 +36,7 @@ public sealed class PartyEntry : Command {
     public override void Use(Player p, string message) {
         if (message == string.Empty) {
             p.MessageLines(Formatter
-                               .BarsWrap(@$"&aParty commands:
+                               .BarsWrap(@$"&aParty Commands:
 &e{Subcommand.FormatText("party",PartyCreate.Name(), PartyCreate.Format())} &7- &b{PartyCreate.Description()}
 &e{Subcommand.FormatText("party",PartyInvite.Name(), PartyInvite.Format())} &7- &b{PartyInvite.Description()}
 &e{Subcommand.FormatText("party",PartyJoin.Name(), PartyJoin.Format())} &7- &b{PartyJoin.Description()}

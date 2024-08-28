@@ -11,7 +11,7 @@ public class Party {
     private Player leader;
 
     public void Message(Player p, string content) {
-        content = $"&9Party &8> {p.ColoredName}&f: {content}";
+        content = $"&9Party &8> &f{p.name}: {content}";
 
         foreach(Player recepient in joinOrder) {
             recepient.Message(content);
@@ -82,7 +82,6 @@ public class Party {
     /// 1: player has requested to join, now in party
     /// 2: player offline
     /// 3: player already in said party
-    /// 4: already invite, cooldown
     public ushort Invite(Player? target, Player inviter) {
         if (!PlayerInfo.Online.Contains(target)) {
             return 2;
@@ -128,7 +127,6 @@ public class Party {
     /// 1: requested
     /// 2: already invited, now in party
     /// 3: player already in said party
-    /// 4: already requested, cooldown
     public ushort Request(Player target, Player requester) {
         if (Contains(requester))
             return 3;

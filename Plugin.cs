@@ -22,6 +22,7 @@ public sealed class Bancho : Plugin {
         Command.Register(new ChatGlobal());
         Command.Register(new ChatLocal());
         Command.Register(new ChatParty());
+        Command.Register(new HelpEntry());
         OnPlayerConnectEvent.Register(OnlinePlayers.PlayerConnect,
                                       Priority.Critical);
         OnPlayerDisconnectEvent.Register(OnlinePlayers.PlayerDisconnect,
@@ -34,7 +35,7 @@ public sealed class Bancho : Plugin {
         Command.Unregister(Command.Find("chat"));
         Command.Unregister(Command.Find("ac"));
         Command.Unregister(Command.Find("lc"));
-        Command.Unregister(Command.Find("pc"));
+        Command.Unregister(Command.Find("help"));
         OnPlayerConnectEvent.Unregister(OnlinePlayers.PlayerConnect);
         OnPlayerDisconnectEvent.Unregister(OnlinePlayers.PlayerDisconnect);
         OnPlayerChatEvent.Unregister(OnlinePlayers.Message);

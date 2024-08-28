@@ -13,7 +13,7 @@ public sealed class ChatEntry : Command {
 
         if (message == string.Empty) {
             p.MessageLines(Formatter
-                               .BarsWrap(@$"&aChat commands:
+                               .BarsWrap(@$"&aChat Commands:
 &e/chat global &7- &bSwitch to global chat
 &e/chat local &7- &bSwitch to local chat
 &e/chat party &7- &bSwitch to party chat
