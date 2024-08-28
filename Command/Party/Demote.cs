@@ -4,7 +4,7 @@ public sealed class PartyDemote : Subcommand {
     public static string Name() { return "demote"; }
 
     public static string Description() {
-        return "Demote party member to a higher role";
+        return "Demote party member to a lower role";
     }
 
     public static string? Format() { return "[player]"; }

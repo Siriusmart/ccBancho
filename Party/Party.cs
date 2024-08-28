@@ -10,6 +10,14 @@ public class Party {
     private List<Player> joinOrder = new List<Player>();
     private Player leader;
 
+    public void Message(Player p, string content) {
+        content = $"&9Party &8> {p.ColoredName}&f: {content}";
+
+        foreach(Player recepient in joinOrder) {
+            recepient.Message(content);
+        }
+    }
+
     public static int InviteCooldown {
         get { return 60; }
     }

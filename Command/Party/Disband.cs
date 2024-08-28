@@ -15,7 +15,7 @@ public sealed class PartyDisband : Subcommand {
         Party party = Parties.GetParty(p);
 
         if (party == null) {
-            p.MessageLines(Formatter.BarsWrap("&cYou are now in a party!")
+            p.MessageLines(Formatter.BarsWrap("&cYou are not in a party!")
                                .Split('\n'));
             return true;
         }

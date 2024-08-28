@@ -8,6 +8,12 @@ Help command: `/party`
 
 ![](./img/party.png)
 
+## Chat
+
+Help command: `/chat`
+
+![](./img/chat.png)
+
 ## Building
 
 ```sh
@@ -23,6 +29,7 @@ dotnet publish -c Release -o out --runtime linux-x64 && cp out/Bancho.dll path/t
 ## Roadmap
 
 - [x] Party system
-- [ ] Chat channels
+- [x] Chat channels
+- [ ] Broadcast scope
 - [ ] Friend system
 - [ ] Game and player stats

@@ -1,4 +1,5 @@
 using MCGalaxy;
+using MCGalaxy.Events.PlayerEvents;
 
 public sealed class Bancho : Plugin {
     public override string creator {
@@ -14,10 +15,28 @@ public sealed class Bancho : Plugin {
     }
 
     public override void Load(bool startup) {
+        OnlinePlayers.Init();
+
         Command.Register(new PartyEntry());
+        Command.Register(new ChatEntry());
+        Command.Register(new ChatGlobal());
+        Command.Register(new ChatLocal());
+        Command.Register(new ChatParty());
+        OnPlayerConnectEvent.Register(OnlinePlayers.PlayerConnect,
+                                      Priority.Critical);
+        OnPlayerDisconnectEvent.Register(OnlinePlayers.PlayerDisconnect,
+                                         Priority.Critical);
+        OnPlayerChatEvent.Register(OnlinePlayers.Message, Priority.Low);
     }
 
     public override void Unload(bool shutdown) {
         Command.Unregister(Command.Find("party"));
+        Command.Unregister(Command.Find("chat"));
+        Command.Unregister(Command.Find("ac"));
+        Command.Unregister(Command.Find("lc"));
+        Command.Unregister(Command.Find("pc"));
+        OnPlayerConnectEvent.Unregister(OnlinePlayers.PlayerConnect);
+        OnPlayerDisconnectEvent.Unregister(OnlinePlayers.PlayerDisconnect);
+        OnPlayerChatEvent.Unregister(OnlinePlayers.Message);
     }
 }
