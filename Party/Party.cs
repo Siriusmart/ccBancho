@@ -45,10 +45,6 @@ public class Party {
         }
     }
 
-    public static int InviteCooldown {
-        get { return 60; }
-    }
-
     public Player[] Members {
         get {
             Player[] list =
@@ -98,7 +94,7 @@ public class Party {
         if (p == null)
             return -1;
         if (invited.ContainsKey(p))
-            return InviteCooldown -
+            return Bancho.Config.InviteCooldown -
                    (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - invited[p]);
 
         return -1;
@@ -110,7 +106,7 @@ public class Party {
         if (p == null)
             return -1;
         if (requested.ContainsKey(p))
-            return InviteCooldown -
+            return Bancho.Config.InviteCooldown -
                    (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - requested[p]);
 
         return -1;
@@ -138,8 +134,9 @@ public class Party {
         } else {
             invited.Add(target, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
             Player[] parameters = { target, inviter };
-            Server.MainScheduler.QueueOnce(RemoveInvite, parameters,
-                                           new TimeSpan(0, 0, InviteCooldown));
+            Server.MainScheduler.QueueOnce(
+                RemoveInvite, parameters,
+                new TimeSpan(0, 0, Bancho.Config.InviteCooldown));
             return 0;
         }
     }
@@ -185,7 +182,7 @@ public class Party {
 
         Player[] parameters = { target, requester };
         Server.MainScheduler.QueueOnce(RemoveRequest, parameters,
-                                       new TimeSpan(0, 0, InviteCooldown));
+                                       new TimeSpan(0, 0, Bancho.Config.InviteCooldown));
         return 1;
     }
 

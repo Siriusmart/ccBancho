@@ -48,10 +48,10 @@ public sealed class PartyInvite : Subcommand {
             target.MessageLines(
                 Formatter
                     .BarsWrap(
-                        $"&eYou have been invited to join {p.ColoredName}'s &eparty! \nYou have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eaccept this invite.\nJoin the party with /party join {p.name}")
+                        $"&eYou have been invited to join {p.ColoredName}'s &eparty! \nYou have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eaccept this invite.\nJoin the party with /party join {p.name}")
                     .Split('\n'));
             party.Tell(Formatter.BarsWrap(
-                $"{p.ColoredName} &einvited {target.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eaccept the invite."));
+                $"{p.ColoredName} &einvited {target.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eaccept the invite."));
             break;
         case 1:
             string[] members =

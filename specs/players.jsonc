@@ -1,0 +1,13 @@
+{
+    // required
+    "_id": "siriusmart",
+    "lastSeen": 0,
+    "playTime": 0,
+
+    "friends": [
+        {
+            "name": "siriusmart",
+            "relationBegin": 0
+        }
+    ]
+}

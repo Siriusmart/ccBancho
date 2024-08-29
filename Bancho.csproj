@@ -4,6 +4,10 @@
     <ProjectReference Include="..\MCGalaxy\MCGalaxy\MCGalaxy_dotnet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.28.0" />
+  </ItemGroup>
+
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <TargetFramework>net8.0</TargetFramework>

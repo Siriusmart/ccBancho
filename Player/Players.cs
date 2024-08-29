@@ -10,12 +10,19 @@ public class OnlinePlayers {
     }
 
     public static void PlayerDisconnect(Player p, string reason) {
+        players[p].Logout();
         players.Remove(p);
     }
 
     public static void Init() {
         foreach (Player p in PlayerInfo.Online.Items) {
             players.Add(p, new OnlinePlayer(p));
+        }
+    }
+
+    public static void Exit() {
+        foreach (OnlinePlayer p in players.Values) {
+            p.Logout();
         }
     }
 

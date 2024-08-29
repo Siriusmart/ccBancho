@@ -14,22 +14,32 @@ Help command: `/chat`
 
 ![](./img/chat.png)
 
+## Usage
+
+Download a [release](https://github.com/Siriusmart/ccBancho/releases) and copy all files to your server folder. Overwrite any old files if needed.
+
+Load the plugin once to generate the .properties file.
+
+### MongoDB
+
+A MongoDB instance should be running without any authentication, edit properties/bancho.properties such that mongodb-address is correct.
+
+specs/\* contains the format of MongoDB documents.
+
+> If you have a use case where you need to run MongoDB with authentication, open a pull request or let me know.
+
 ## Building
 
-```sh
-dotnet publish -c Release -o out
-```
+1. Git clone MCGalaxy such that the repo is available at ../
+2. Edit `build.sh` such that the first line points to your server folder, and run it.
 
-For easy of development, do
-
-```sh
-dotnet publish -c Release -o out --runtime linux-x64 && cp out/Bancho.dll path/to/plugins
-```
+Note that only the generate content in out/releases are critical.
 
 ## Roadmap
 
 - [x] Party system
 - [x] Chat channels
-- [ ] Broadcast scope
+- [x] Broadcast scope
 - [ ] Friend system
-- [ ] Game and player stats
+- [ ] Guilds
+- [ ] Games framework

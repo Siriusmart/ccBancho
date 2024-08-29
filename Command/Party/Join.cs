@@ -51,10 +51,10 @@ public sealed class PartyJoin : Subcommand {
             p.MessageLines(
                 Formatter
                     .BarsWrap(
-                        $"&eJoin request sent. They have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eto accept your request.")
+                        $"&eJoin request sent. They have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eto accept your request.")
                     .Split('\n'));
             party.Tell(Formatter.BarsWrap(
-                $"{p.ColoredName} &ehas requested to join your party.\nYou have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eto accept this request.\nAccept the request with /party invite {p.name}"));
+                $"{p.ColoredName} &ehas requested to join your party.\nYou have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eto accept this request.\nAccept the request with /party invite {p.name}"));
             break;
         case 2:
             string[] members =

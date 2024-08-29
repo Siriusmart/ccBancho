@@ -1,7 +1,18 @@
 using MCGalaxy;
 using MCGalaxy.Events.PlayerEvents;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 public sealed class Bancho : Plugin {
+    public static BanchoConfig Config = new BanchoConfig();
+    public static MongoClient Mongo;
+    public static IMongoDatabase BanchoDB;
+    public static IMongoCollection<BsonDocument> BanchoPlayers;
+
+    public override int build {
+        get { return 0; }
+    }
+
     public override string creator {
         get { return "siriusmart"; }
     }
@@ -15,6 +26,12 @@ public sealed class Bancho : Plugin {
     }
 
     public override void Load(bool startup) {
+        Config.Load();
+
+        Mongo = new MongoClient(Config.MongoAddress);
+        BanchoDB = Mongo.GetDatabase(Config.MongoName);
+        BanchoPlayers = BanchoDB.GetCollection<BsonDocument>("players");
+
         OnlinePlayers.Init();
 
         Command.Register(new PartyEntry());
@@ -39,5 +56,7 @@ public sealed class Bancho : Plugin {
         OnPlayerConnectEvent.Unregister(OnlinePlayers.PlayerConnect);
         OnPlayerDisconnectEvent.Unregister(OnlinePlayers.PlayerDisconnect);
         OnPlayerChatEvent.Unregister(OnlinePlayers.Message);
+
+        OnlinePlayers.Exit();
     }
 }
