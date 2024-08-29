@@ -34,8 +34,8 @@ public sealed class PartyKick : Subcommand {
             target.MessageLines(
                 Formatter.BarsWrap($"&eYou have been kicked from the party.")
                     .Split('\n'));
-            party.Tell(
-                $"{target.ColoredName} &ehas been kicked from the party.");
+            party.Tell(Formatter.BarsWrap(
+                $"{target.ColoredName} &ehas been kicked from the party."));
             break;
         case 1:
         case 2:

@@ -43,18 +43,15 @@ public sealed class PartyPromote : Subcommand {
         case 1:
             throw new Exception("unreachable");
         case 2:
-            // TODO party broadcast
-            p.MessageLines(
-                Formatter
-                    .BarsWrap(
-                        $"{target.ColoredName} &ehas been promoted to party moderator.")
-                    .Split('\n'));
             target.MessageLines(
                 Formatter.BarsWrap("You have been promoted to party moderator.")
                     .Split('\n'));
+            party.TellExcept(
+                target,
+                Formatter.BarsWrap(
+                    $"{target.ColoredName} &ehas been promoted to party moderator."));
             break;
         case 3:
-            // TODO party broadcast
             p.MessageLines(
                 Formatter
                     .BarsWrap(
@@ -71,7 +68,7 @@ public sealed class PartyPromote : Subcommand {
             party.TellExcept(
                 except,
                 Formatter.BarsWrap(
-                    $"{target.ColoredName} been promoted to party leader.\n{p.ColoredName} &eis now a party moderator."));
+                    $"{target.ColoredName} &ebeen promoted to party leader.\n{p.ColoredName} &eis now a party moderator."));
             break;
         }
 

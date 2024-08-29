@@ -51,16 +51,17 @@ public class Party {
 
     public Player[] Members {
         get {
-            Player[] list = members.ToArray();
-            Array.Sort(list);
+            Player[] list =
+                joinOrder.Where(player => members.Contains(player)).ToArray();
             return list;
         }
     }
 
     public Player[] Moderators {
         get {
-            Player[] list = moderators.ToArray();
-            Array.Sort(list);
+            Player[] list =
+                joinOrder.Where(player => moderators.Contains(player))
+                    .ToArray();
             return list;
         }
     }
@@ -79,10 +80,16 @@ public class Party {
         settings.Add("allInvite", false);
         settings.Add("allowRequest", true);
         settings.Add("mute", false);
+        OnlinePlayer? player = OnlinePlayers.GetPlayer(p);
+        if (player != null)
+            player.party = this;
     }
 
     public bool Contains(Player p) {
-        return members.Contains(p) || moderators.Contains(p) || leader == p;
+        OnlinePlayer? player = OnlinePlayers.GetPlayer(p);
+        if (player != null)
+            return player.party == this;
+        return false;
     }
 
     /// less than 0: no cooldown
@@ -124,6 +131,9 @@ public class Party {
         if (requested.Remove(target)) {
             members.Add(target);
             joinOrder.Add(target);
+            OnlinePlayer? player = OnlinePlayers.GetPlayer(target);
+            if (player != null)
+                player.party = this;
             return 1;
         } else {
             invited.Add(target, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
@@ -162,6 +172,9 @@ public class Party {
         if (invited.Remove(requester)) {
             members.Add(requester);
             joinOrder.Add(requester);
+            OnlinePlayer? player = OnlinePlayers.GetPlayer(requester);
+            if (player != null)
+                player.party = this;
             return 2;
         }
 
@@ -223,6 +236,10 @@ public class Party {
     /// 2: removed leader, auto promotion
     /// 3: not in party
     public ushort Remove(Player p) {
+        OnlinePlayer? player = OnlinePlayers.GetPlayer(p);
+        if (player != null)
+            player.party = null;
+
         if (!joinOrder.Remove(p))
             return 3;
 
@@ -328,7 +345,5 @@ public class Party {
         return (members.ToArray(), moderators.ToArray(), leader);
     }
 
-    public Player[] FlatList() {
-        return members.Concat(moderators).Append(leader).ToArray();
-    }
+    public Player[] FlatList() { return joinOrder.ToArray(); }
 }

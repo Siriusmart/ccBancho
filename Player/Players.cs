@@ -32,4 +32,10 @@ public class OnlinePlayers {
     public static bool SwitchChannel(Player p, ChatChannel channel) {
         return players[p].SwitchChannel(channel);
     }
+
+    public static OnlinePlayer? GetPlayer(Player p) {
+        if (!players.ContainsKey(p))
+            return null;
+        return players[p];
+    }
 }

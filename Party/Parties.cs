@@ -11,10 +11,9 @@ public class Parties {
     }
 
     public static Party? GetParty(Player p) {
-        foreach (Party party in all) {
-            if (party.Contains(p))
-                return party;
-        }
+        OnlinePlayer? player = OnlinePlayers.GetPlayer(p);
+        if (player != null)
+            return player.party;
 
         return null;
     }

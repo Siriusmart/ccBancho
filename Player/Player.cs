@@ -10,7 +10,12 @@ public class OnlinePlayer {
     public ChatChannel channel = ChatChannel.local;
 
     public Player player;
-    public OnlinePlayer(Player p) { player = p; }
+    public OnlinePlayer(Player p) {
+        player = p;
+        party = Parties.GetParty(p);
+    }
+
+    public Party? party;
 
     public ChatChannel Channel {
         get { return channel; }

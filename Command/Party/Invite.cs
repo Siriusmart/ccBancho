@@ -54,15 +54,16 @@ public sealed class PartyInvite : Subcommand {
                 $"{p.ColoredName} &einvited {target.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Party.InviteCooldown, 1)} &eaccept the invite."));
             break;
         case 1:
-            string[] members = party.Members.Concat(party.Moderators)
-                                   .Where(player => player != target)
-                                   .Select(player => player.ColoredName)
-                                   .ToArray();
-            Array.Sort(members);
+            string[] members =
+                party.FlatList()
+                    .Where(player => player != target && player != party.Leader)
+                    .Select(player => player.ColoredName)
+                    .ToArray();
 
             target.MessageLines(
                 Formatter
-                    .BarsWrap($"&eYou have joined {p.ColoredName}'s &eparty{
+                    .BarsWrap(
+                        $"&eYou have joined {party.Leader.ColoredName}'s &eparty{
                         (members.Length == 1 ?
                         $" with {Formatter.ListItems(members)}" :
                         string.Empty)
