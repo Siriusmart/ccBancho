@@ -31,9 +31,9 @@ specs/\* contains the format of MongoDB documents.
 ## Building
 
 1. Git clone MCGalaxy such that the repo is available at ../
-2. Edit `build.sh` such that the first line points to your server folder, and run it.
+2. Edit `build-[target_os].sh` such that the first line points to your server folder, and run it.
 
-Note that only the generate content in out/releases are critical.
+> For developers: note that release.sh hides all errors during compile, so please check that the project is error-free before compiling.
 
 ## Roadmap
 
