@@ -2,18 +2,19 @@ using MCGalaxy;
 using MongoDB.Bson;
 
 public class Friend {
-    private Player player;
-    private long relationBegin;
+    public Player player;
+    public long relationBegin;
 
-    public BsonValue asBson() {
-        BsonValue output = new BsonDocument();
+    public BsonDocument asBson() {
+        BsonDocument output = new BsonDocument();
         output["name"] = player.name;
         output["relationBegin"] = relationBegin;
         return output;
     }
 
     public Friend(BsonDocument doc) {
-        player = PlayerInfo.FindExact((string)doc["name"]);
+        string name = (string)doc["name"];
+        player = PlayerInfo.FindExact(name) ?? new Player(name);
         relationBegin = (long)doc.GetValue(
             "relationBegin", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
     }
@@ -30,5 +31,10 @@ public class Friend {
 
     public Player UnderlyingPlayer {
         get { return player; }
+    }
+
+    public void ReplacePlayer(Player p) {
+        if (p.name == player.name)
+            player = p;
     }
 }

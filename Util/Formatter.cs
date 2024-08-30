@@ -1,9 +1,15 @@
 public class Formatter {
     private static string bar =
         "&9-----------------------------------------------------";
+    private static string darkGreenBar =
+        "&2-----------------------------------------------------";
 
     public static string BarsWrap(string content) {
         return $"{bar}\n{content}\n{bar}";
+    }
+
+    public static string FriendBarsWrap(string content) {
+        return $"{darkGreenBar}\n{content}\n{darkGreenBar}";
     }
 
     private static (string, long)[] units = { ("week", 604800), ("day", 86400),

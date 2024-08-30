@@ -24,6 +24,14 @@ public sealed class PartyDemote : Subcommand {
 
         Player target = PlayerInfo.FindExact(args[0]);
 
+        if(target == p) {
+            p.MessageLines(
+                Formatter
+                    .BarsWrap("&cYou cannot demote yourself!")
+                    .Split('\n'));
+            return true;
+        }
+
         if (!party.Contains(target)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cThat player is not in your party!")

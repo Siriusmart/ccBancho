@@ -39,8 +39,7 @@ public sealed class PartyList : Subcommand {
 
         p.MessageLines(
             Formatter
-                .BarsWrap(
-                    $"&6Party Members ({partySize})\n{people.Join("\n")}")
+                .BarsWrap($"&6Party Members ({partySize})\n{people.Join("\n")}")
                 .Split("\n"));
 
         return true;

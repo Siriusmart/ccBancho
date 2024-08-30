@@ -4,6 +4,9 @@ public sealed class PartyEntry : Command {
     public override string name {
         get { return "party"; }
     }
+    public override string shortcut {
+        get { return "p"; }
+    }
     public override string type {
         get { return "social"; }
     }

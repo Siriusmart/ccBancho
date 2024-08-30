@@ -23,6 +23,69 @@ public class Party {
         }
     }
 
+    public void ReplacePlayer(Player p) {
+        for (int i = 0; i < joinOrder.Count(); i++) {
+            if (joinOrder[i].name == p.name) {
+                joinOrder[i] = p;
+                if (leader.name == p.name) {
+                    leader = p;
+                    return;
+                }
+                Player? mod = moderators.Where(player => player.name == p.name)
+                                  .FirstOrDefault();
+                if (mod != null) {
+                    moderators.Remove(mod);
+                    moderators.Add(p);
+                    return;
+                }
+                Player? mem = members.Where(player => player.name == p.name)
+                                  .FirstOrDefault();
+                if (mem != null) {
+                    members.Remove(mem);
+                    members.Add(p);
+                    return;
+                }
+                Player? req =
+                    requested.Keys.Where(player => player.name == p.name)
+                        .FirstOrDefault();
+                if (req != null) {
+                    requested.Add(p, requested[req]);
+                    requested.Remove(req);
+                    return;
+                }
+                Player? inv = invited.Keys.Where(player => player.name == p.name)
+                                  .FirstOrDefault();
+                if (inv != null) {
+                    invited.Add(p, invited[inv]);
+                    invited.Remove(inv);
+                    return;
+                }
+                throw new Exception("unreachable");
+            }
+        }
+    }
+
+    public int OnlineCount() {
+        return FlatList()
+            .Where(player => PlayerInfo.Online.Contains(player))
+            .Count();
+    }
+
+    public void RegisterLogout() {
+        if (OnlineCount() != 0)
+            return;
+
+        Server.MainScheduler.QueueOnce(
+            AutoClose, null, new TimeSpan(0, 0, Bancho.Config.PartyLife));
+    }
+
+    public void AutoClose(SchedulerTask task) {
+        if (OnlineCount() != 0)
+            return;
+
+        Parties.Remove(this);
+    }
+
     public void Tell(string content) {
         foreach (Player recepient in joinOrder) {
             recepient.MessageLines(content.Split('\n'));
@@ -79,6 +142,10 @@ public class Party {
         OnlinePlayer? player = OnlinePlayers.GetPlayer(p);
         if (player != null)
             player.party = this;
+    }
+
+    public bool ContainsInit(Player p) {
+        return joinOrder.Contains(p);
     }
 
     public bool Contains(Player p) {
@@ -181,8 +248,9 @@ public class Party {
         requested.Add(requester, DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
         Player[] parameters = { target, requester };
-        Server.MainScheduler.QueueOnce(RemoveRequest, parameters,
-                                       new TimeSpan(0, 0, Bancho.Config.InviteCooldown));
+        Server.MainScheduler.QueueOnce(
+            RemoveRequest, parameters,
+            new TimeSpan(0, 0, Bancho.Config.InviteCooldown));
         return 1;
     }
 
@@ -249,7 +317,6 @@ public class Party {
         }
 
         if (p == leader) {
-            p.Message("got here");
             Promote(joinOrder[0]);
             Promote(joinOrder[0]);
             return 2;

@@ -22,6 +22,14 @@ public sealed class PartyKick : Subcommand {
 
         Player target = PlayerInfo.FindExact(args[0]);
 
+        if(target == p) {
+            p.MessageLines(
+                Formatter
+                    .BarsWrap("&cYou cannot kick yourself!")
+                    .Split('\n'));
+            return true;
+        }
+
         if (target != null && !party.IsHigher(p, target)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou don't have permission to do that!")

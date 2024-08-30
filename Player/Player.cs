@@ -16,9 +16,11 @@ public class OnlinePlayer {
     private Player player;
 
     public OnlinePlayer(Player p) {
+        Parties.ReplacePlayer(p);
+        OnlinePlayers.ReplacePlayer(p);
         joinTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         player = p;
-        party = Parties.GetParty(p);
+        party = Parties.GetPartyInit(p);
 
         BsonDocument playerInfo =
             Bancho.BanchoPlayers.Find(item => item["_id"] == p.name)
@@ -48,13 +50,49 @@ public class OnlinePlayer {
         }
     }
 
+    public void ReplacePlayer(Player p) {
+        for (int i = 0; i < friends.Count(); i++) {
+            friends[i].ReplacePlayer(p);
+        }
+    }
+
+    /// -2: currently online
+    /// -1: not known
+    /// anything else: timestamp
+    public static long LastSeen(Player p) {
+        if (PlayerInfo.Online.Contains(p))
+            return -2;
+
+        BsonDocument playerInfo =
+            Bancho.BanchoPlayers.Find(item => item["_id"] == p.name)
+                .FirstOrDefault();
+
+        if (playerInfo == null || !playerInfo.Contains("lastSeen"))
+            return -1;
+
+        return (long)playerInfo["lastSeen"];
+    }
+
     public void Logout() {
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+
+        if (party != null) {
+            party.RegisterLogout();
+        }
+
+        foreach (Player friendRequested in recievedRequests.Keys) {
+            friendRequested.MessageLines(
+                Formatter
+                    .FriendBarsWrap(
+                        $"&eThe friend request to {player.ColoredName} &ehas expired because the player is now offline.")
+                    .Split('\n'));
+        }
+        recievedRequests.Clear();
 
         FilterDefinition<BsonDocument> filter =
             Builders<BsonDocument>.Filter.Eq("_id", player.name);
         UpdateDefinition<BsonDocument> update =
-            Builders<BsonDocument>.Update.Set("lastSeen", now).Inc("playTime", now - joinTime).Set("friends", friends);
+            Builders<BsonDocument>.Update.Set("lastSeen", now).Inc("playTime", now - joinTime).Set("friends", friends.Select(friend => friend.asBson()));
         UpdateResult? res = Bancho.BanchoPlayers.UpdateOne(filter, update);
     }
 
@@ -77,8 +115,8 @@ public class OnlinePlayer {
 
         OnlinePlayer target = OnlinePlayers.GetPlayer(p);
 
-        if (target.recievedRequests.ContainsKey(player)) {
-            target.recievedRequests.Remove(player);
+        if (recievedRequests.ContainsKey(p)) {
+            recievedRequests.Remove(p);
 
             (Friend, Friend) pair = Friend.FriendPair(player, p);
             target.friends.Add(pair.Item1);
@@ -97,13 +135,13 @@ public class OnlinePlayer {
 
     /// less than 0: no cooldown
     /// anything else: seconds
-    public long FriendRequestCooldownRemaining(Player p) {
-        if (p == null)
+    public long FriendRequestCooldownRemaining(Player fromPlayer) {
+        if (fromPlayer == null)
             return -1;
-        if (recievedRequests.ContainsKey(p))
+        if (recievedRequests.ContainsKey(fromPlayer))
             return Bancho.Config.FriendCooldown -
                    (DateTimeOffset.UtcNow.ToUnixTimeSeconds() -
-                    recievedRequests[p]);
+                    recievedRequests[fromPlayer]);
         return -1;
     }
 
@@ -151,7 +189,7 @@ public class OnlinePlayer {
             Chat.MessageFromLevel(player, $"{player.ColoredName}&f: {message}");
             break;
         case ChatChannel.party:
-            Party party = Parties.GetParty(player);
+            Party party = Parties.GetParty(this);
 
             if (party == null) {
                 player.MessageLines(
@@ -174,7 +212,7 @@ public class OnlinePlayer {
             Chat.MessageFromLevel(player, $"{player.ColoredName}&f: {message}");
             break;
         case ChatChannel.party:
-            Party party = Parties.GetParty(player);
+            Party party = Parties.GetParty(this);
 
             if (party == null) {
                 channel = ChatChannel.local;

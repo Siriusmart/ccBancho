@@ -45,4 +45,10 @@ public class OnlinePlayers {
             return null;
         return players[p];
     }
+
+    public static void ReplacePlayer(Player p) {
+        foreach (OnlinePlayer player in players.Values) {
+            player.ReplacePlayer(p);
+        }
+    }
 }
