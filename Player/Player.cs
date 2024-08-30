@@ -168,7 +168,25 @@ public class OnlinePlayer {
     }
 
     public bool HasFriend(Player p) {
-        return friends.Any(friend => friend.UnderlyingPlayer == p);
+        return friends.Any(friend => friend.UnderlyingPlayer.name == p.name);
+    }
+
+    public void Unfriend(Player p) {
+        for (int i = 0; i < friends.Count(); i++) {
+            if (friends[i].player.name == p.name) {
+                friends.RemoveAt(i);
+                return;
+            }
+        }
+    }
+
+    public static void UnfriendSave(Player target, Player p) {
+        FilterDefinition<BsonDocument> filter =
+            Builders<BsonDocument>.Filter.Eq("_id", target.name);
+        UpdateDefinition<BsonDocument> update =
+            Builders<BsonDocument>.Update.PullFilter(
+                "friends", Builders<BsonDocument>.Filter.Eq("name", p.name));
+        UpdateResult? res = Bancho.BanchoPlayers.UpdateOne(filter, update);
     }
 
     public ChatChannel Channel {

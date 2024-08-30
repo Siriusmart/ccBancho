@@ -15,6 +15,8 @@ public sealed class FriendEntry : Command {
         switch (command) {
         case "add":
             return typeof(FriendAdd);
+        case "remove":
+            return typeof(FriendRemove);
         default:
             return null;
         }
@@ -24,7 +26,8 @@ public sealed class FriendEntry : Command {
         if (message == string.Empty) {
             p.MessageLines(Formatter
                                .FriendBarsWrap(@$"&aFriend Commands:
-&e{Subcommand.FormatText("friend",FriendAdd.Name(), FriendAdd.Format())} &7- &b{FriendAdd.Description()}")
+&e{Subcommand.FormatText("friend",FriendAdd.Name(), FriendAdd.Format())} &7- &b{FriendAdd.Description()}
+&e{Subcommand.FormatText("friend",FriendRemove.Name(), FriendRemove.Format())} &7- &b{FriendRemove.Description()}")
                                .Split("\n"));
             return;
         }
