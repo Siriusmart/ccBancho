@@ -13,12 +13,14 @@ public sealed class BanchoConfig {
     private const string PATH = "properties/bancho.properties";
     private static ConfigElement[] cfg;
 
-    [ConfigString("mongodb-address", "General", "mongodb://localhost:27017")]
+    [ConfigString("mongodb-address", "General", "mongodb://localhost:27017", false)]
     public string MongoAddress = "mongodb://localhost:27017";
-    [ConfigString("mongodb-name", "General", "ccBancho")]
+    [ConfigString("mongodb-name", "General", "ccBancho", false)]
     public string MongoName = "ccBancho";
-    [ConfigInt("invite-cooldown", "Cooldown", 60)]
+    [ConfigInt("invite-cooldown", "Cooldown", 60, 0)]
     public int InviteCooldown = 60;
+    [ConfigInt("friend-cooldown", "Cooldown", 300, 0)]
+    public int FriendCooldown = 300;
 
     public void Load() {
         // create default config file

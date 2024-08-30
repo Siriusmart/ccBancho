@@ -13,6 +13,13 @@ public sealed class PartyJoin : Subcommand {
         }
 
         Player target = PlayerInfo.FindExact(args[0]);
+
+        if (target == p) {
+            p.MessageLines(
+                Formatter.BarsWrap("&cYou cannot join yourself!").Split('\n'));
+            return true;
+        }
+
         Party party = Parties.GetParty(target);
 
         if (party == null) {

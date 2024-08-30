@@ -14,6 +14,16 @@ public sealed class PartyInvite : Subcommand {
             return false;
         }
 
+        Player target = PlayerInfo.FindExact(args[0]);
+
+        if(target == p) {
+            p.MessageLines(
+                Formatter
+                    .BarsWrap("&cYou cannot invite yourself!")
+                    .Split('\n'));
+            return true;
+        }
+
         bool temporary = false;
 
         Party party = Parties.GetParty(p);
@@ -30,8 +40,6 @@ public sealed class PartyInvite : Subcommand {
                     .Split('\n'));
             return true;
         }
-
-        Player target = PlayerInfo.FindExact(args[0]);
 
         long cooldown = party.InvitedCooldownRemaining(target);
         if (cooldown > 0) {

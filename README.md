@@ -22,7 +22,7 @@ Load the plugin once to generate the .properties file.
 
 ### MongoDB
 
-A MongoDB instance should be running without any authentication, edit properties/bancho.properties such that mongodb-address is correct.
+A MongoDB instance should be running without any authentication, add the line `mongodb-address = [address]` to properties/bancho.properties.
 
 specs/\* contains the format of MongoDB documents.
 

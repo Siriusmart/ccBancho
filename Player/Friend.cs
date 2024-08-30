@@ -17,4 +17,18 @@ public class Friend {
         relationBegin = (long)doc.GetValue(
             "relationBegin", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
     }
+
+    public Friend(Player p, long begin) {
+        player = p;
+        relationBegin = begin;
+    }
+
+    public static (Friend, Friend) FriendPair(Player one, Player two) {
+        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        return (new Friend(one, now), new Friend(two, now));
+    }
+
+    public Player UnderlyingPlayer {
+        get { return player; }
+    }
 }
