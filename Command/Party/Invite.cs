@@ -14,13 +14,11 @@ public sealed class PartyInvite : Subcommand {
             return false;
         }
 
-        Player target = PlayerInfo.FindExact(args[0]);
+        Player target = OnlinePlayers.Find(args[0]);
 
-        if(target == p) {
-            p.MessageLines(
-                Formatter
-                    .BarsWrap("&cYou cannot invite yourself!")
-                    .Split('\n'));
+        if (target == p) {
+            p.MessageLines(Formatter.BarsWrap("&cYou cannot invite yourself!")
+                               .Split('\n'));
             return true;
         }
 

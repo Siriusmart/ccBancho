@@ -38,6 +38,7 @@ public class OnlinePlayer {
             playerInfo["_id"] = p.name;
             playerInfo["lastSeen"] = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
             playerInfo["playTime"] = 0;
+            playerInfo["colour"] = p.color;
             playerInfo["friends"] = new BsonArray();
             Bancho.BanchoPlayers.InsertOne(playerInfo);
         } else {
@@ -92,7 +93,7 @@ public class OnlinePlayer {
         FilterDefinition<BsonDocument> filter =
             Builders<BsonDocument>.Filter.Eq("_id", player.name);
         UpdateDefinition<BsonDocument> update =
-            Builders<BsonDocument>.Update.Set("lastSeen", now).Inc("playTime", now - joinTime).Set("friends", friends.Select(friend => friend.asBson()));
+            Builders<BsonDocument>.Update.Set("lastSeen", now).Inc("playTime", now - joinTime).Set("friends", friends.Select(friend => friend.asBson())).Set("colour",  player.color);
         UpdateResult? res = Bancho.BanchoPlayers.UpdateOne(filter, update);
     }
 

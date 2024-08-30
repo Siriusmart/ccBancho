@@ -22,7 +22,7 @@ public sealed class PartyDemote : Subcommand {
             return true;
         }
 
-        Player target = PlayerInfo.FindExact(args[0]);
+        Player target = OnlinePlayers.Find(args[0]);
 
         if(target == p) {
             p.MessageLines(

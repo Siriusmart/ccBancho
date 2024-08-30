@@ -1,5 +1,8 @@
 using MCGalaxy;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using MongoDB.Bson;
+using MongoDB.Driver;
 
 public class OnlinePlayers {
     private static Dictionary<Player, OnlinePlayer> players =
@@ -50,5 +53,55 @@ public class OnlinePlayers {
         foreach (OnlinePlayer player in players.Values) {
             player.ReplacePlayer(p);
         }
+    }
+
+    public static Player? Find(string name) {
+        foreach (Player p in PlayerInfo.Online.Items) {
+            if (p.name.CaselessEq(name))
+                return p;
+        }
+
+        string regexFilter = Regex.Escape(name);
+        BsonRegularExpression regex =
+            new BsonRegularExpression(regexFilter, "i");
+        ;
+
+        FilterDefinition<BsonDocument> filter =
+            Builders<BsonDocument>.Filter.Regex("_id", regex);
+        BsonDocument? doc = Bancho.BanchoPlayers.Find(filter).FirstOrDefault();
+
+        if (doc == null)
+            return null;
+
+        Player player = new Player((string)doc["_id"]);
+        if (doc.Contains("colour"))
+            player.color = (string)doc["colour"];
+
+        return player;
+    }
+
+    public static Player? FindExact(string name) {
+        foreach (Player p in PlayerInfo.Online.Items) {
+            if (p.name == name)
+                return p;
+        }
+
+        string regexFilter = Regex.Escape(name);
+        BsonRegularExpression regex =
+            new BsonRegularExpression(regexFilter, "i");
+        ;
+
+        FilterDefinition<BsonDocument> filter =
+            Builders<BsonDocument>.Filter.Eq("_id", name);
+        BsonDocument? doc = Bancho.BanchoPlayers.Find(filter).FirstOrDefault();
+
+        if (doc == null)
+            return null;
+
+        Player player = new Player((string)doc["_id"]);
+        if (doc.Contains("colour"))
+            player.color = (string)doc["colour"];
+
+        return player;
     }
 }
