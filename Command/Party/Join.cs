@@ -12,15 +12,9 @@ public sealed class PartyJoin : Subcommand {
             return false;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
 
-        if (target == p) {
-            p.MessageLines(
-                Formatter.BarsWrap("&cYou cannot join yourself!").Split('\n'));
-            return true;
-        }
-
-        Party party = Parties.GetParty(target);
+        Party party = target == null ? null : Parties.GetParty(target.player);
 
         if (party == null) {
             p.MessageLines(
@@ -29,7 +23,22 @@ public sealed class PartyJoin : Subcommand {
             return true;
         }
 
+        if (target.player == p) {
+            p.MessageLines(
+                Formatter.BarsWrap("&cYou cannot join yourself!").Split('\n'));
+            return true;
+        }
+
         if (Parties.GetParty(p) != null) {
+            if (party.Contains(p)) {
+                p.MessageLines(
+                    Formatter
+                        .BarsWrap(
+                            $"&cYou are already in a party with that player!")
+                        .Split('\n'));
+                return true;
+            }
+
             p.MessageLines(
                 Formatter
                     .BarsWrap(
@@ -48,7 +57,7 @@ public sealed class PartyJoin : Subcommand {
             return true;
         }
 
-        switch (party.Request(target, p)) {
+        switch (party.Request(target.player, p)) {
         case 0:
             p.MessageLines(
                 Formatter.BarsWrap($"&cThe party has join requests disabled.")

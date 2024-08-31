@@ -20,37 +20,41 @@ public sealed class PartyKick : Subcommand {
             return true;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
 
-        if (target == p) {
+        if (target == null || !party.Contains(target.player)) {
+            p.MessageLines(
+                Formatter.BarsWrap("&cThat player is not in your party.")
+                    .Split('\n'));
+            return true;
+        }
+
+        if (target.player == p) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou cannot kick yourself!").Split('\n'));
             return true;
         }
 
-        if (target != null && !party.IsHigher(p, target)) {
+        if (target.player != null && !party.IsHigher(p, target.player)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou don't have permission to do that!")
                     .Split('\n'));
             return true;
         }
 
-        switch (party.Remove(target)) {
+        switch (party.Remove(target.player)) {
         case 0:
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter.BarsWrap($"&eYou have been kicked from the party.")
                     .Split('\n'));
             party.Tell(Formatter.BarsWrap(
-                $"{target.ColoredName} &ehas been kicked from the party."));
+                $"{target.player.ColoredName} &ehas been kicked from the party."));
             break;
         case 1:
         case 2:
             throw new Exception("unreachable");
         case 3:
-            p.MessageLines(
-                Formatter.BarsWrap("&cThat player is not in your party.")
-                    .Split('\n'));
-            return true;
+            throw new Exception("unreachable");
         }
 
         return true;

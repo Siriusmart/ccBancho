@@ -13,7 +13,12 @@ public class OnlinePlayer {
     private long joinTime;
     public ChatChannel channel = ChatChannel.local;
 
-    private Player player;
+    public Player player;
+
+    public OnlinePlayer(Player p, List<Friend> friends) {
+        player = p;
+        this.friends = friends;
+    }
 
     public OnlinePlayer(Player p) {
         Parties.ReplacePlayer(p);
@@ -102,6 +107,10 @@ public class OnlinePlayer {
     public Dictionary<Player, long> recievedRequests =
         new Dictionary<Player, long>();
     private List<Friend> friends = new List<Friend>();
+
+    public List<Friend> Friends {
+        get { return friends; }
+    }
 
     /// 0: player offline
     /// 1: request sent

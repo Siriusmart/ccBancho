@@ -55,10 +55,10 @@ public class OnlinePlayers {
         }
     }
 
-    public static Player? Find(string name) {
+    public static OnlinePlayer? Find(string name) {
         foreach (Player p in PlayerInfo.Online.Items) {
             if (p.name.CaselessEq(name))
-                return p;
+                return GetPlayer(p);
         }
 
         string regexFilter = Regex.Escape(name);
@@ -76,14 +76,23 @@ public class OnlinePlayers {
         Player player = new Player((string)doc["_id"]);
         if (doc.Contains("colour"))
             player.color = (string)doc["colour"];
+        List<Friend> friends =
+            doc.Contains("friends")
+                ? doc["friends"]
+                      .AsBsonArray
+                      .Select(friend => new Friend(friend.ToBsonDocument()))
+                      .ToList()
+                : new List<Friend>();
 
-        return player;
+        return new OnlinePlayer(player, friends);
     }
 
-    public static Player? FindExact(string name) {
+    public static OnlinePlayer? FindExact(string name) {
         foreach (Player p in PlayerInfo.Online.Items) {
-            if (p.name == name)
-                return p;
+            if (p.name == name) {
+                return GetPlayer(p) ??
+                       new OnlinePlayer(new Player(name), new List<Friend>());
+            }
         }
 
         string regexFilter = Regex.Escape(name);
@@ -101,7 +110,14 @@ public class OnlinePlayers {
         Player player = new Player((string)doc["_id"]);
         if (doc.Contains("colour"))
             player.color = (string)doc["colour"];
+        List<Friend> friends =
+            doc.Contains("friends")
+                ? doc["friends"]
+                      .AsBsonArray
+                      .Select(friend => new Friend(friend.ToBsonDocument()))
+                      .ToList()
+                : new List<Friend>();
 
-        return player;
+        return new OnlinePlayer(player, friends);
     }
 }

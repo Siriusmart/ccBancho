@@ -12,17 +12,10 @@ public sealed class FriendRemove : Subcommand {
             return false;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
         OnlinePlayer remover = OnlinePlayers.GetPlayer(p);
 
-        if (target == p) {
-            p.MessageLines(
-                Formatter.FriendBarsWrap("&cYou cannot unfriend yourself!")
-                    .Split('\n'));
-            return true;
-        }
-
-        if (!remover.HasFriend(target)) {
+        if (target == null || !remover.HasFriend(target.player)) {
             p.MessageLines(
                 Formatter
                     .FriendBarsWrap("&cYou are not friends with that player.")
@@ -30,24 +23,31 @@ public sealed class FriendRemove : Subcommand {
             return true;
         }
 
-        OnlinePlayer targetPlayer = OnlinePlayers.GetPlayer(target);
+        if (target.player == p) {
+            p.MessageLines(
+                Formatter.FriendBarsWrap("&cYou cannot unfriend yourself!")
+                    .Split('\n'));
+            return true;
+        }
+
+        OnlinePlayer targetPlayer = OnlinePlayers.GetPlayer(target.player);
         if (targetPlayer != null) {
             targetPlayer.Unfriend(p);
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter
                     .FriendBarsWrap(
                         $"{p.ColoredName} &e removed you as a friend.")
                     .Split('\n'));
         } else {
-            OnlinePlayer.UnfriendSave(target, p);
+            OnlinePlayer.UnfriendSave(target.player, p);
         }
 
-        remover.Unfriend(target);
+        remover.Unfriend(target.player);
 
         p.MessageLines(
             Formatter
                 .FriendBarsWrap(
-                    $"&eYou are no longer friends with {target.ColoredName}.")
+                    $"&eYou are no longer friends with {target.player.ColoredName}&e.")
                 .Split('\n'));
 
         return true;

@@ -14,9 +14,8 @@ public class Friend {
 
     public Friend(BsonDocument doc) {
         string name = (string)doc["name"];
-        if (doc.Contains("colour"))
-            player.color = (string)doc["colour"];
-        player = OnlinePlayers.FindExact(name) ?? new Player(name);
+        OnlinePlayer exact = OnlinePlayers.FindExact(name);
+        player = exact == null ? new Player(name) : exact.player;
         relationBegin = (long)doc.GetValue(
             "relationBegin", DateTimeOffset.UtcNow.ToUnixTimeSeconds());
     }

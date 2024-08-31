@@ -22,61 +22,59 @@ public sealed class PartyPromote : Subcommand {
             return true;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
 
-        if(target == p) {
-            p.MessageLines(
-                Formatter
-                    .BarsWrap("&cYou cannot promote yourself!")
-                    .Split('\n'));
-            return true;
-        }
-
-        if (!party.Contains(target)) {
+        if (target == null || !party.Contains(target.player)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cThat player is not in your party!")
                     .Split('\n'));
             return true;
         }
 
-        if (!party.IsHigher(p, target)) {
+        if (target.player == p) {
+            p.MessageLines(Formatter.BarsWrap("&cYou cannot promote yourself!")
+                               .Split('\n'));
+            return true;
+        }
+
+        if (!party.IsHigher(p, target.player)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou don't have permission to do that!")
                     .Split('\n'));
             return true;
         }
 
-        switch (party.Promote(target)) {
+        switch (party.Promote(target.player)) {
         case 0:
         case 1:
             throw new Exception("unreachable");
         case 2:
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter.BarsWrap("You have been promoted to party moderator.")
                     .Split('\n'));
             party.TellExcept(
-                target,
+                target.player,
                 Formatter.BarsWrap(
-                    $"{target.ColoredName} &ehas been promoted to party moderator."));
+                    $"{target.player.ColoredName} &ehas been promoted to party moderator."));
             break;
         case 3:
             p.MessageLines(
                 Formatter
                     .BarsWrap(
-                        $"{target.ColoredName} &ehas been promoted to party leader.\nYou are now a party moderator.")
+                        $"{target.player.ColoredName} &ehas been promoted to party leader.\nYou are now a party moderator.")
                     .Split('\n'));
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter
                     .BarsWrap(
                         $"You have been promoted to party leader.\n{p.ColoredName} &eis now a party moderator.")
                     .Split('\n'));
 
             HashSet<Player> except =
-                new HashSet<Player>(new Player[] { p, target });
+                new HashSet<Player>(new Player[] { p, target.player });
             party.TellExcept(
                 except,
                 Formatter.BarsWrap(
-                    $"{target.ColoredName} &ebeen promoted to party leader.\n{p.ColoredName} &eis now a party moderator."));
+                    $"{target.player.ColoredName} &ebeen promoted to party leader.\n{p.ColoredName} &eis now a party moderator."));
             break;
         }
 

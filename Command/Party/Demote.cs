@@ -22,48 +22,47 @@ public sealed class PartyDemote : Subcommand {
             return true;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
 
-        if(target == p) {
-            p.MessageLines(
-                Formatter
-                    .BarsWrap("&cYou cannot demote yourself!")
-                    .Split('\n'));
-            return true;
-        }
-
-        if (!party.Contains(target)) {
+        if (target == null || !party.Contains(target.player)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cThat player is not in your party!")
                     .Split('\n'));
             return true;
         }
 
-        if (!party.IsHigher(p, target)) {
+        if (target.player == p) {
+            p.MessageLines(Formatter.BarsWrap("&cYou cannot demote yourself!")
+                               .Split('\n'));
+            return true;
+        }
+
+        if (!party.IsHigher(p, target.player)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou don't have permission to do that!")
                     .Split('\n'));
             return true;
         }
 
-        switch (party.Promote(target)) {
+        switch (party.Promote(target.player)) {
         case 0:
         case 1:
             throw new Exception("unreachable");
         case 2:
             p.MessageLines(
                 Formatter
-                    .BarsWrap($"{target.ColoredName} &cis already a member.")
+                    .BarsWrap(
+                        $"{target.player.ColoredName} &cis already a member.")
                     .Split('\n'));
             break;
         case 3:
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter.BarsWrap($"&eYou have been demoted to party member.")
                     .Split('\n'));
             party.TellExcept(
-                target,
+                target.player,
                 Formatter.BarsWrap(
-                    $"{target.ColoredName} &ehas been demoted to party member."));
+                    $"{target.player.ColoredName} &ehas been demoted to party member."));
             break;
         }
 

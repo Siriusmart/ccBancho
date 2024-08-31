@@ -12,9 +12,9 @@ public sealed class FriendAdd : Subcommand {
             return false;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
 
-        if (!PlayerInfo.Online.Contains(target)) {
+        if (target == null || !PlayerInfo.Online.Contains(target.player)) {
             p.MessageLines(
                 Formatter
                     .FriendBarsWrap(
@@ -23,9 +23,9 @@ public sealed class FriendAdd : Subcommand {
             return true;
         }
 
-        OnlinePlayer targetPlayer = OnlinePlayers.GetPlayer(target);
+        OnlinePlayer targetPlayer = OnlinePlayers.GetPlayer(target.player);
 
-        if (target == p) {
+        if (target.player == p) {
             p.MessageLines(
                 Formatter.FriendBarsWrap("&cYou cannot friend yourself!")
                     .Split('\n'));
@@ -42,11 +42,11 @@ public sealed class FriendAdd : Subcommand {
             return true;
         }
 
-        switch (OnlinePlayers.GetPlayer(p).FriendAdd(target)) {
+        switch (OnlinePlayers.GetPlayer(p).FriendAdd(target.player)) {
         case 0:
             throw new Exception("unreachable");
         case 1:
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter
                     .FriendBarsWrap(
                         $"&eYou got a friend request from {p.ColoredName}!\nYou have &c{Formatter.Duration(Bancho.Config.FriendCooldown, 1)} &eaccept this request.\nAdd {p.ColoredName} &eas a friend with /friend add {p.name}")
@@ -54,7 +54,7 @@ public sealed class FriendAdd : Subcommand {
             p.MessageLines(
                 Formatter
                     .FriendBarsWrap(
-                        $"Friend request sent to {target.ColoredName}\nThey have &c{Formatter.Duration(Bancho.Config.FriendCooldown, 1)} &eaccept the request.")
+                        $"Friend request sent to {target.player.ColoredName}\nThey have &c{Formatter.Duration(Bancho.Config.FriendCooldown, 1)} &eaccept the request.")
                     .Split('\n'));
             break;
             break;
@@ -62,9 +62,9 @@ public sealed class FriendAdd : Subcommand {
             p.MessageLines(
                 Formatter
                     .FriendBarsWrap(
-                        $"&aYou are now friends with {target.ColoredName}&a!")
+                        $"&aYou are now friends with {target.player.ColoredName}&a!")
                     .Split('\n'));
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter
                     .FriendBarsWrap(
                         $"&aYou are now friends with {p.ColoredName}&a!")

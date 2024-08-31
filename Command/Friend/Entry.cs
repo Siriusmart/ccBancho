@@ -17,6 +17,8 @@ public sealed class FriendEntry : Command {
             return typeof(FriendAdd);
         case "remove":
             return typeof(FriendRemove);
+        case "list":
+            return typeof(FriendList);
         default:
             return null;
         }
@@ -27,7 +29,8 @@ public sealed class FriendEntry : Command {
             p.MessageLines(Formatter
                                .FriendBarsWrap(@$"&aFriend Commands:
 &e{Subcommand.FormatText("friend",FriendAdd.Name(), FriendAdd.Format())} &7- &b{FriendAdd.Description()}
-&e{Subcommand.FormatText("friend",FriendRemove.Name(), FriendRemove.Format())} &7- &b{FriendRemove.Description()}")
+&e{Subcommand.FormatText("friend",FriendRemove.Name(), FriendRemove.Format())} &7- &b{FriendRemove.Description()}
+&e{Subcommand.FormatText("friend",FriendList.Name(), FriendList.Format())} &7- &b{FriendList.Description()}")
                                .Split("\n"));
             return;
         }

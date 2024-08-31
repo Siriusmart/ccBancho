@@ -24,8 +24,10 @@ public sealed class BanchoConfig {
     [ConfigInt("friend-cooldown", "Cooldown", 300, 0)]
     public int FriendCooldown = 300;
     // how long a party is allowed to exist without any member onlne
-    [ConfigInt("party-life", "Cooldown", 300, 0)]
+    [ConfigInt("party-life", "Social", 300, 0)]
     public int PartyLife = 300;
+    [ConfigInt("friend-page-size", "Social", 10, 0)]
+    public int FriendPageSize = 10;
 
     public void Load() {
         // create default config file

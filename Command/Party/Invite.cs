@@ -14,9 +14,17 @@ public sealed class PartyInvite : Subcommand {
             return false;
         }
 
-        Player target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.Find(args[0]);
 
-        if (target == p) {
+        if (target == null || !PlayerInfo.Online.Contains(target.player)) {
+            p.MessageLines(
+                Formatter
+                    .BarsWrap($"&cThat player is not online at the moment.")
+                    .Split('\n'));
+            return true;
+        }
+
+        if (target.player == p) {
             p.MessageLines(Formatter.BarsWrap("&cYou cannot invite yourself!")
                                .Split('\n'));
             return true;
@@ -29,6 +37,12 @@ public sealed class PartyInvite : Subcommand {
         if (party == null) {
             temporary = true;
             party = Parties.Create(p);
+        } else if (party.Contains(target.player)) {
+            p.MessageLines(
+                Formatter
+                    .BarsWrap($"&cYou are already in a party with that player!")
+                    .Split('\n'));
+            return true;
         }
 
         if (!party.CanInvite(p)) {
@@ -39,7 +53,7 @@ public sealed class PartyInvite : Subcommand {
             return true;
         }
 
-        long cooldown = party.InvitedCooldownRemaining(target);
+        long cooldown = party.InvitedCooldownRemaining(target.player);
         if (cooldown > 0) {
             p.MessageLines(
                 Formatter
@@ -49,24 +63,24 @@ public sealed class PartyInvite : Subcommand {
             return true;
         }
 
-        switch (party.Invite(target, p)) {
+        switch (party.Invite(target.player, p)) {
         case 0:
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter
                     .BarsWrap(
                         $"&eYou have been invited to join {p.ColoredName}'s &eparty! \nYou have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eaccept this invite.\nJoin the party with /party join {p.name}")
                     .Split('\n'));
             party.Tell(Formatter.BarsWrap(
-                $"{p.ColoredName} &einvited {target.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eaccept the invite."));
+                $"{p.ColoredName} &einvited {target.player.ColoredName} &eto the party! \nThey have &c{Formatter.Duration(Bancho.Config.InviteCooldown, 1)} &eaccept the invite."));
             break;
         case 1:
-            string[] members =
-                party.FlatList()
-                    .Where(player => player != target && player != party.Leader)
-                    .Select(player => player.ColoredName)
-                    .ToArray();
+            string[] members = party.FlatList()
+                                   .Where(player => player != target.player &&
+                                                    player != party.Leader)
+                                   .Select(player => player.ColoredName)
+                                   .ToArray();
 
-            target.MessageLines(
+            target.player.MessageLines(
                 Formatter
                     .BarsWrap(
                         $"&eYou have joined {party.Leader.ColoredName}'s &eparty{
@@ -76,18 +90,13 @@ public sealed class PartyInvite : Subcommand {
                         }.")
                     .Split('\n'));
 
-            party.TellExcept(target,
-                             Formatter.BarsWrap(
-                                 $"{target.ColoredName} &ejoined the party."));
+            party.TellExcept(
+                target.player,
+                Formatter.BarsWrap(
+                    $"{target.player.ColoredName} &ejoined the party."));
             break;
         case 2:
-            p.MessageLines(
-                Formatter
-                    .BarsWrap($"&cThat player is not online at the moment.")
-                    .Split('\n'));
-            if (temporary)
-                Parties.Remove(party);
-            break;
+            throw new Exception("unreachable");
         case 3:
             p.MessageLines(
                 Formatter.BarsWrap($"&cThis player is already in your party!")
