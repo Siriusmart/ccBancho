@@ -40,6 +40,8 @@ public sealed class Bancho : Plugin {
         Command.Register(new ChatGlobal());
         Command.Register(new ChatLocal());
         Command.Register(new ChatParty());
+        Command.Register(new ChatMsg());
+        Command.Register(new ChatReply());
         Command.Register(new HelpEntry());
         OnPlayerConnectEvent.Register(OnlinePlayers.PlayerConnect,
                                       Priority.Critical);
@@ -52,6 +54,8 @@ public sealed class Bancho : Plugin {
         Command.Unregister(Command.Find("party"));
         Command.Unregister(Command.Find("friend"));
         Command.Unregister(Command.Find("chat"));
+        Command.Unregister(Command.Find("msg"));
+        Command.Unregister(Command.Find("reply"));
         Command.Unregister(Command.Find("ac"));
         Command.Unregister(Command.Find("lc"));
         Command.Unregister(Command.Find("help"));

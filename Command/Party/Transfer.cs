@@ -1,11 +1,9 @@
 using MCGalaxy;
 
-public sealed class PartyDemote : Subcommand {
-    public static string Name() { return "demote"; }
+public sealed class PartyTransfer : Subcommand {
+    public static string Name() { return "transfer"; }
 
-    public static string Description() {
-        return "Demote party member to a lower role";
-    }
+    public static string Description() { return "Transfer party ownership"; }
 
     public static string? Format() { return "[player]"; }
 
@@ -32,37 +30,27 @@ public sealed class PartyDemote : Subcommand {
         }
 
         if (target == p) {
-            p.MessageLines(Formatter.BarsWrap("&cYou cannot demote yourself!")
-                               .Split('\n'));
+            p.MessageLines(
+                Formatter.BarsWrap("&cYou transfer to yourself!").Split('\n'));
             return true;
         }
 
-        if (!party.IsHigher(p, target)) {
+        if (!party.IsOwner(p)) {
             p.MessageLines(
-                Formatter.BarsWrap("&cYou don't have permission to do that!")
-                    .Split('\n'));
+                Formatter.BarsWrap("&cYou are not the owner!").Split('\n'));
             return true;
         }
 
-        switch (party.Demote(target)) {
-        case 0:
-        case 1:
-            throw new Exception("unreachable");
-        case 2:
-            p.MessageLines(
-                Formatter
-                    .BarsWrap($"{target.ColoredName} &cis already a member.")
-                    .Split('\n'));
-            break;
-        case 3:
+        if (party.Transfer(target)) {
             target.MessageLines(
-                Formatter.BarsWrap($"&eYou have been demoted to party member.")
+                Formatter
+                    .BarsWrap(
+                        $"&eYou are given party ownership.\n{p.ColoredName} &eis now a party moderator.")
                     .Split('\n'));
             party.TellExcept(
                 target,
                 Formatter.BarsWrap(
-                    $"{target.ColoredName} &ehas been demoted to party member."));
-            break;
+                    $"&eThe party is transferred to {target.ColoredName}&e.\n{p.ColoredName} &eis now a party moderator."));
         }
 
         return true;

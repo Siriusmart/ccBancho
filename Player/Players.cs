@@ -55,6 +55,24 @@ public class OnlinePlayers {
         }
     }
 
+    public static OnlinePlayer? FindOnline(string name) {
+        foreach (Player p in PlayerInfo.Online.Items) {
+            if (p.name.CaselessEq(name))
+                return GetPlayer(p);
+        }
+
+        return null;
+    }
+
+    public static OnlinePlayer? FindOnlineExact(string name) {
+        foreach (Player p in PlayerInfo.Online.Items) {
+            if (p.name == name)
+                return GetPlayer(p);
+        }
+
+        return null;
+    }
+
     public static OnlinePlayer? Find(string name) {
         foreach (Player p in PlayerInfo.Online.Items) {
             if (p.name.CaselessEq(name))

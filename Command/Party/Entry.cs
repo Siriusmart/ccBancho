@@ -25,6 +25,8 @@ public sealed class PartyEntry : Command {
             return typeof(PartyPromote);
         case "demote":
             return typeof(PartyDemote);
+        case "transfer":
+            return typeof(PartyTransfer);
         case "leave":
             return typeof(PartyLeave);
         case "kick":
@@ -48,6 +50,7 @@ public sealed class PartyEntry : Command {
 &e{Subcommand.FormatText("party",PartyList.Name(), PartyList.Format())} &7- &b{PartyList.Description()}
 &e{Subcommand.FormatText("party",PartyPromote.Name(), PartyPromote.Format())} &7- &b{PartyPromote.Description()}
 &e{Subcommand.FormatText("party",PartyDemote.Name(), PartyDemote.Format())} &7- &b{PartyDemote.Description()}
+&e{Subcommand.FormatText("party",PartyTransfer.Name(), PartyTransfer.Format())} &7- &b{PartyTransfer.Description()}
 &e{Subcommand.FormatText("party",PartyLeave.Name(), PartyLeave.Format())} &7- &b{PartyLeave.Description()}
 &e{Subcommand.FormatText("party",PartyKick.Name(), PartyKick.Format())} &7- &b{PartyKick.Description()}
 &e{Subcommand.FormatText("party",PartyDisband.Name(), PartyDisband.Format())} &7- &b{PartyDisband.Description()}

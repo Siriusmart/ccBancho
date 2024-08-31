@@ -6,12 +6,16 @@ using MongoDB.Driver;
 public enum ChatChannel {
     global,
     party,
+    player,
     local,
 }
 
 public class OnlinePlayer {
     private long joinTime;
     public ChatChannel channel = ChatChannel.local;
+    public Player chatPlayer = null;
+    public Player lastMessagedBy = null;
+    public long lastMessagedTime = 0;
 
     public Player player;
 
@@ -56,9 +60,43 @@ public class OnlinePlayer {
         }
     }
 
+    public bool MessagePlayer(OnlinePlayer target, string content) {
+        if (target == null) {
+            player.Message($"&cThat player isn't online currently!");
+            return false;
+        }
+        if (target.player == player) {
+            player.Message($"&cYou cannot message yourself!");
+            return false;
+        }
+        target.lastMessagedBy = player;
+        target.lastMessagedTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        player.Message($"&dTo {target.player.ColoredName}&7: {content}");
+        target.player.Message($"&dFrom {player.ColoredName}&7: {content}");
+        return true;
+    }
+
+    public void Reply(string content) {
+        long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        if (now - lastMessagedTime > Bancho.Config.MessageReplyTimeOut) {
+            player.Message(
+                $"&cYou have not been messaged by anyone in the past {Formatter.Duration(Bancho.Config.MessageReplyTimeOut, 2)}");
+            return;
+        }
+        MessagePlayer(OnlinePlayers.GetPlayer(lastMessagedBy), content);
+    }
+
     public void ReplacePlayer(Player p) {
         for (int i = 0; i < friends.Count(); i++) {
             friends[i].ReplacePlayer(p);
+        }
+
+        if (chatPlayer != null && chatPlayer.name == p.name) {
+            chatPlayer = p;
+        }
+
+        if (lastMessagedBy != null && lastMessagedBy.name == p.name) {
+            lastMessagedBy = p;
         }
     }
 
@@ -253,6 +291,17 @@ public class OnlinePlayer {
             }
 
             party.Message(player, message);
+            break;
+        case ChatChannel.player:
+            if (!PlayerInfo.Online.Contains(chatPlayer)) {
+                player.MessageLines(
+                    Formatter
+                        .BarsWrap(
+                            "&cThat player isn't online currently.")
+                        .Split('\n'));
+                return;
+            }
+            MessagePlayer(OnlinePlayers.GetPlayer(chatPlayer), message);
             break;
         }
     }

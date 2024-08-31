@@ -29,7 +29,7 @@ public sealed class PartyDisband : Subcommand {
 
         party.Tell(Formatter.BarsWrap($"&eThe party has been disbanded."));
 
-        foreach (Player member in party.Members) {
+        foreach (Player member in party.FlatList()) {
             OnlinePlayer player = OnlinePlayers.GetPlayer(member);
             if (player != null)
                 player.party = null;

@@ -17,6 +17,8 @@ public sealed class ChatEntry : Command {
 &e/chat global &7- &bSwitch to global chat
 &e/chat local &7- &bSwitch to local chat
 &e/chat party &7- &bSwitch to party chat
+&e/chat [player] &7- &bSwitch to private chat with a player
+&e/msg [player] [message] &7- &bSend a private message to a player
 &e/ac [message] &7- &bSend a message in the global chat
 &e/lc [message] &7- &bSend a message in the local chat
 &e/pc [message] &7- &bSend a message in the party chat")
@@ -43,8 +45,28 @@ public sealed class ChatEntry : Command {
                 changed = OnlinePlayers.SwitchChannel(p, ChatChannel.party);
                 break;
             default:
-                p.MessageLines(Formatter.BarsWrap("&cChannel does not exist.")
-                                   .Split('\n'));
+                OnlinePlayer target = OnlinePlayers.FindOnline(args[0]);
+                if (target == null) {
+                    p.MessageLines(
+                        Formatter
+                            .BarsWrap("&cThat player is currently not online.")
+                            .Split('\n'));
+                    return;
+                }
+                if (target.player == p) {
+                    p.MessageLines(
+                        Formatter.BarsWrap("&cYou cannot chat with yourself.")
+                            .Split('\n'));
+                    return;
+                }
+                OnlinePlayer source = OnlinePlayers.GetPlayer(p);
+                source.chatPlayer = target.player;
+                source.channel = ChatChannel.player;
+                p.MessageLines(
+                    Formatter
+                        .BarsWrap(
+                            $"&eYou are now chatting with {target.player.ColoredName}")
+                        .Split('\n'));
                 return;
             }
 

@@ -28,6 +28,8 @@ public sealed class BanchoConfig {
     public int PartyLife = 300;
     [ConfigInt("friend-page-size", "Social", 10, 0)]
     public int FriendPageSize = 10;
+    [ConfigInt("message-reply-timeout", "Social", 300, 0)]
+    public int MessageReplyTimeOut = 300;
 
     public void Load() {
         // create default config file

@@ -23,6 +23,52 @@ public class Party {
         }
     }
 
+    public Player? GetPlayer(string name) {
+        foreach (Player p in invited.Keys) {
+            if (p.name.CaselessEq(name))
+                return p;
+        }
+        foreach (Player p in requested.Keys) {
+            if (p.name.CaselessEq(name))
+                return p;
+        }
+        foreach (Player p in members) {
+            if (p.name.CaselessEq(name))
+                return p;
+        }
+        foreach (Player p in moderators) {
+            if (p.name.CaselessEq(name))
+                return p;
+        }
+        if (leader.name.CaselessEq(name))
+            return leader;
+
+        return null;
+    }
+
+    public Player? GetPlayerExact(string name) {
+        foreach (Player p in invited.Keys) {
+            if (p.name == name)
+                return p;
+        }
+        foreach (Player p in requested.Keys) {
+            if (p.name == name)
+                return p;
+        }
+        foreach (Player p in members) {
+            if (p.name == name)
+                return p;
+        }
+        foreach (Player p in moderators) {
+            if (p.name == name)
+                return p;
+        }
+        if (name == leader.name)
+            return leader;
+
+        return null;
+    }
+
     public void ReplacePlayer(Player p) {
         for (int i = 0; i < joinOrder.Count(); i++) {
             if (joinOrder[i].name == p.name) {
@@ -53,8 +99,9 @@ public class Party {
                     requested.Remove(req);
                     return;
                 }
-                Player? inv = invited.Keys.Where(player => player.name == p.name)
-                                  .FirstOrDefault();
+                Player? inv =
+                    invited.Keys.Where(player => player.name == p.name)
+                        .FirstOrDefault();
                 if (inv != null) {
                     invited.Add(p, invited[inv]);
                     invited.Remove(inv);
@@ -144,14 +191,24 @@ public class Party {
             player.party = this;
     }
 
-    public bool ContainsInit(Player p) {
-        return joinOrder.Contains(p);
-    }
+    public bool ContainsInit(Player p) { return joinOrder.Contains(p); }
 
     public bool Contains(Player p) {
         OnlinePlayer? player = OnlinePlayers.GetPlayer(p);
         if (player != null)
             return player.party == this;
+
+        foreach (Player member in members) {
+            if (member.name == p.name)
+                return true;
+        }
+        foreach (Player member in moderators) {
+            if (member.name == p.name)
+                return true;
+        }
+        if (p.name == leader.name)
+            return true;
+
         return false;
     }
 
@@ -211,10 +268,11 @@ public class Party {
     private void RemoveInvite(SchedulerTask task) {
         Player[] players = (Player[])task.State;
 
-        if (!invited.ContainsKey(players[0]))
+        Player toRemove = GetPlayerExact(players[0].name);
+        if (toRemove == null || !invited.ContainsKey(toRemove))
             return;
 
-        invited.Remove((Player)players[0]);
+        invited.Remove(toRemove);
 
         players[0].MessageLines(
             Formatter
@@ -257,10 +315,11 @@ public class Party {
     private void RemoveRequest(SchedulerTask task) {
         Player[] players = (Player[])task.State;
 
-        if (!requested.ContainsKey(players[0]))
+        Player toRemove = GetPlayerExact(players[0].name);
+        if (toRemove == null || !requested.ContainsKey(toRemove))
             return;
 
-        requested.Remove((Player)players[0]);
+        requested.Remove(toRemove);
 
         players[0].MessageLines(
             Formatter
@@ -364,7 +423,7 @@ public class Party {
         }
 
         if (moderators.Remove(p)) {
-            members.Add(leader);
+            members.Add(p);
             return 3;
         }
 
@@ -372,9 +431,10 @@ public class Party {
     }
 
     public bool Transfer(Player p) {
-        if (Remove(p) != 3) {
+        if (Contains(p)) {
             moderators.Add(leader);
             leader = p;
+            bool res = moderators.Remove(p) || members.Remove(p);
             return true;
         } else {
             return false;

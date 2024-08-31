@@ -12,7 +12,7 @@ public sealed class PartyJoin : Subcommand {
             return false;
         }
 
-        OnlinePlayer target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.FindOnline(args[0]);
 
         Party party = target == null ? null : Parties.GetParty(target.player);
 

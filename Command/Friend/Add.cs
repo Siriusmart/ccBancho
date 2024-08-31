@@ -12,9 +12,9 @@ public sealed class FriendAdd : Subcommand {
             return false;
         }
 
-        OnlinePlayer target = OnlinePlayers.Find(args[0]);
+        OnlinePlayer target = OnlinePlayers.FindOnline(args[0]);
 
-        if (target == null || !PlayerInfo.Online.Contains(target.player)) {
+        if (target == null) {
             p.MessageLines(
                 Formatter
                     .FriendBarsWrap(

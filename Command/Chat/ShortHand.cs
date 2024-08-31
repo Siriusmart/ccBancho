@@ -9,6 +9,10 @@ public class ChatGlobal : Command {
     }
 
     public override void Use(Player p, string message) {
+        if (message == string.Empty) {
+            p.Message("&cIncorrect usage /ac [message]");
+            return;
+        }
         OnlinePlayers.Message(p, ChatChannel.global, message);
     }
 
@@ -26,6 +30,10 @@ public class ChatLocal : Command {
     }
 
     public override void Use(Player p, string message) {
+        if (message == string.Empty) {
+            p.Message("&cIncorrect usage /lc [message]");
+            return;
+        }
         OnlinePlayers.Message(p, ChatChannel.local, message);
     }
 
@@ -43,6 +51,10 @@ public class ChatParty : Command {
     }
 
     public override void Use(Player p, string message) {
+        if (message == string.Empty) {
+            p.Message("&cIncorrect usage /pc [message]");
+            return;
+        }
         OnlinePlayers.Message(p, ChatChannel.party, message);
     }
 

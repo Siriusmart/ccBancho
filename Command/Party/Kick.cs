@@ -20,35 +20,35 @@ public sealed class PartyKick : Subcommand {
             return true;
         }
 
-        OnlinePlayer target = OnlinePlayers.Find(args[0]);
+        Player target = party.GetPlayer(args[0]);
 
-        if (target == null || !party.Contains(target.player)) {
+        if (target == null || !party.Contains(target)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cThat player is not in your party.")
                     .Split('\n'));
             return true;
         }
 
-        if (target.player == p) {
+        if (target == p) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou cannot kick yourself!").Split('\n'));
             return true;
         }
 
-        if (target.player != null && !party.IsHigher(p, target.player)) {
+        if (target != null && !party.IsHigher(p, target)) {
             p.MessageLines(
                 Formatter.BarsWrap("&cYou don't have permission to do that!")
                     .Split('\n'));
             return true;
         }
 
-        switch (party.Remove(target.player)) {
+        switch (party.Remove(target)) {
         case 0:
-            target.player.MessageLines(
+            target.MessageLines(
                 Formatter.BarsWrap($"&eYou have been kicked from the party.")
                     .Split('\n'));
             party.Tell(Formatter.BarsWrap(
-                $"{target.player.ColoredName} &ehas been kicked from the party."));
+                $"{target.ColoredName} &ehas been kicked from the party."));
             break;
         case 1:
         case 2:
