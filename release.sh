@@ -49,7 +49,7 @@ dotnet publish -c Release -o out/linux_x64 --runtime linux-x64 > /dev/null
 echo -en "\033[0K\r${GREY}[${YELLOW}2${WHITE}/${YELLOW}3${GREY}] ${GREEN}Building for osx_x64  "
 dotnet publish -c Release -o out/osx_x64 --runtime osx-x64 > /dev/null
 echo -en "\033[0K\r${GREY}[${YELLOW}3${WHITE}/${YELLOW}3${GREY}] ${GREEN}Building for win_x64  "
-dotnet publish -c Release -o out/osx_x64 --runtime win-x64 > /dev/null
+dotnet publish -c Release -o out/win_x64 --runtime win-x64 > /dev/null
 
 mkdir -p release/linux_x64/plugins
 mkdir -p release/osx_x64/plugins
