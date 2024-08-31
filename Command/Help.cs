@@ -4,6 +4,9 @@ public class HelpEntry : Command {
     public override string name {
         get { return "help"; }
     }
+    public override string shortcut {
+        get { return "h"; }
+    }
     public override string type {
         get { return "info"; }
     }
@@ -15,7 +18,8 @@ public class HelpEntry : Command {
             p.MessageLines(Formatter
                                .BarsWrap(@$"&aBancho Commands:
 &e/chat <args..> &7- &bManage player chat settings
-&e/party <args..> &7- &bManage game parties")
+&e/party <args..> &7- &bManage game parties
+&e/friend <args..> &7- &bManage friends")
                                .Split("\n"));
             return;
         }
