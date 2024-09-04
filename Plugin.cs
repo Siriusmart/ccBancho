@@ -10,7 +10,7 @@ public sealed class Bancho : Plugin {
     public static IMongoCollection<BsonDocument> BanchoPlayers;
 
     public override int build {
-        get { return 1; }
+        get { return 2; }
     }
 
     public override string creator {
@@ -33,6 +33,7 @@ public sealed class Bancho : Plugin {
         BanchoPlayers = BanchoDB.GetCollection<BsonDocument>("players");
 
         OnlinePlayers.Init();
+        Games.OnLoad();
 
         Command.Register(new PartyEntry());
         Command.Register(new FriendEntry());
@@ -43,6 +44,7 @@ public sealed class Bancho : Plugin {
         Command.Register(new ChatMsg());
         Command.Register(new ChatReply());
         Command.Register(new HelpEntry());
+
         OnPlayerConnectEvent.Register(OnlinePlayers.PlayerConnect,
                                       Priority.Critical);
         OnPlayerDisconnectEvent.Register(OnlinePlayers.PlayerDisconnect,
@@ -51,6 +53,8 @@ public sealed class Bancho : Plugin {
     }
 
     public override void Unload(bool shutdown) {
+        Games.OnUnload();
+
         Command.Unregister(Command.Find("party"));
         Command.Unregister(Command.Find("friend"));
         Command.Unregister(Command.Find("chat"));

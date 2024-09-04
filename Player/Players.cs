@@ -5,7 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 
 public class OnlinePlayers {
-    private static Dictionary<Player, OnlinePlayer> players =
+    private static volatile Dictionary<Player, OnlinePlayer> players =
         new Dictionary<Player, OnlinePlayer>();
 
     public static void PlayerConnect(Player p) {

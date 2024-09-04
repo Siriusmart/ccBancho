@@ -12,10 +12,11 @@ public enum ChatChannel {
 
 public class OnlinePlayer {
     private long joinTime;
-    public ChatChannel channel = ChatChannel.local;
-    public Player chatPlayer = null;
-    public Player lastMessagedBy = null;
-    public long lastMessagedTime = 0;
+    public volatile ChatChannel channel = ChatChannel.local;
+    public volatile Player chatPlayer = null;
+    public volatile Player lastMessagedBy = null;
+    public volatile uint lastMessagedTime =
+        0; // breaks at year 2106, but im not there around to find out
 
     public Player player;
 
@@ -70,7 +71,8 @@ public class OnlinePlayer {
             return false;
         }
         target.lastMessagedBy = player;
-        target.lastMessagedTime = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
+        target.lastMessagedTime =
+            (uint)DateTimeOffset.UtcNow.ToUnixTimeSeconds();
         player.Message($"&dTo {target.player.ColoredName}&7: {content}");
         target.player.Message($"&dFrom {player.ColoredName}&7: {content}");
         return true;
@@ -142,9 +144,9 @@ public class OnlinePlayer {
 
     public Party? party;
 
-    public Dictionary<Player, long> recievedRequests =
+    public volatile Dictionary<Player, long> recievedRequests =
         new Dictionary<Player, long>();
-    private List<Friend> friends = new List<Friend>();
+    private volatile List<Friend> friends = new List<Friend>();
 
     public List<Friend> Friends {
         get { return friends; }
@@ -295,9 +297,7 @@ public class OnlinePlayer {
         case ChatChannel.player:
             if (!PlayerInfo.Online.Contains(chatPlayer)) {
                 player.MessageLines(
-                    Formatter
-                        .BarsWrap(
-                            "&cThat player isn't online currently.")
+                    Formatter.BarsWrap("&cThat player isn't online currently.")
                         .Split('\n'));
                 return;
             }

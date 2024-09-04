@@ -3,12 +3,14 @@ using MCGalaxy.Tasks;
 using System.Linq;
 
 public class Party {
-    private Dictionary<Player, long> invited = new Dictionary<Player, long>();
-    private Dictionary<Player, long> requested = new Dictionary<Player, long>();
-    private HashSet<Player> members = new HashSet<Player>();
-    private HashSet<Player> moderators = new HashSet<Player>();
-    private List<Player> joinOrder = new List<Player>();
-    private Player leader;
+    private volatile Dictionary<Player, long> invited =
+        new Dictionary<Player, long>();
+    private volatile Dictionary<Player, long> requested =
+        new Dictionary<Player, long>();
+    private volatile HashSet<Player> members = new HashSet<Player>();
+    private volatile HashSet<Player> moderators = new HashSet<Player>();
+    private volatile List<Player> joinOrder = new List<Player>();
+    private volatile Player leader;
 
     public void Message(Player p, string content) {
         if (Permission(p) < 2 && settings["mute"]) {
@@ -176,7 +178,7 @@ public class Party {
         get { return leader; }
     }
 
-    private Dictionary<string, bool> settings = new Dictionary<string, bool>();
+    private volatile Dictionary<string, bool> settings = new Dictionary<string, bool>();
 
     public bool IsEmpty() { return FlatList().Length == 1; }
 

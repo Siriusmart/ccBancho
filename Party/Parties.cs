@@ -1,7 +1,7 @@
 using MCGalaxy;
 
 public class Parties {
-    private static HashSet<Party> all = new HashSet<Party>();
+    private static volatile HashSet<Party> all = new HashSet<Party>();
 
     public static int Count() { return all.Count(); }
 

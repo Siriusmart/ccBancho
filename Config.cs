@@ -31,6 +31,12 @@ public sealed class BanchoConfig {
     [ConfigInt("message-reply-timeout", "Social", 300, 0)]
     public int MessageReplyTimeOut = 300;
 
+    [ConfigString("main-level", "Game", "main", false)]
+    public string MainLevel = "main";
+    // how long between checking for new maps for games
+    [ConfigInt("map-update-interval", "Game", 300, 0)]
+    public int MapUpdateInterval = 300;
+
     public void Load() {
         // create default config file
         if (!File.Exists(PATH))

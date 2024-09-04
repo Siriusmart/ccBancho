@@ -2,7 +2,7 @@ using MCGalaxy;
 using MongoDB.Bson;
 
 public class Friend {
-    public Player player;
+    public volatile Player player;
     public long relationBegin;
 
     public BsonDocument asBson() {
