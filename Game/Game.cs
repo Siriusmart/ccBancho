@@ -8,9 +8,17 @@ public abstract class Game {
     private static volatile uint lastMapUpdate = 0;
     private static volatile string[] maps;
     public abstract string ModeName();
+    public abstract string ShortName();
     public static string StaticModeName() { return null; }
+    public static string StaticShortName() { return null; }
+    public bool HasStarted = false;
 
-    public abstract string[] UpdateMaps();
+    public string[] UpdateMaps() {
+        return Directory.GetFiles($"levels/games/{ModeName()}/", "*.lvl")
+            .Select((path) => path.Substring(0, path.LastIndexOf('.'))
+                                  .Substring(path.LastIndexOf('/') + 1))
+            .ToArray();
+    }
 
     public long startTime;
     public string Name {
@@ -36,7 +44,7 @@ public abstract class Game {
 
         if (gamestartNew == 0) {
             countdownTryNumber++;
-            // TODO start now
+            OnStartEvent();
             return;
         }
 
@@ -77,24 +85,41 @@ public abstract class Game {
         }
     }
 
+    public void MessagePlayers(string content) {
+        foreach (Player p in players) {
+            p.MessageLines(content.Split('\n'));
+        }
+    }
+
+    public void MessageSpectators(string content) {
+        foreach (Player p in spectators) {
+            p.MessageLines(content.Split('\n'));
+        }
+    }
+
+    public void MessageAll(string content) {
+        MessagePlayers(content);
+        MessageSpectators(content);
+    }
+
     private void CountdownTick(SchedulerTask task) {
         int[] state = (int[])task.State;
 
         if (countdownTryNumber != state[2])
             return;
 
+        if (state[1] == 0)
+            return;
+
         switch (state[0]) {
         case 1:
-            Chat.MessageAll($"game starting in {state[1]}");
+            MessageAll(
+                $"Game starting in {Formatter.Duration(state[1], 3)}");
             break;
         case 2:
-            Chat.MessageAll($"broadcast starting in {state[1]}");
+            MessageAll(
+                $"Announcing to lobby in {Formatter.Duration(state[1], 3)}");
             break;
-        }
-
-        if (state[1] == 0) {
-            Chat.MessageAll("countdown ended");
-            return;
         }
 
         state[1]--;
@@ -109,10 +134,9 @@ public abstract class Game {
     }
     public abstract int MaxPlayers { get; }
 
-    public abstract bool HasStarted();
     public abstract bool CanSpectate();
     public bool CanJoin() {
-        return !HasStarted() && players.Count() != MaxPlayers;
+        return !HasStarted && players.Count() != MaxPlayers;
     }
 
     public Game() {
@@ -139,8 +163,9 @@ public abstract class Game {
             name = $"{ModeName()}-{discriminator}";
         } while (Games.HasGame(name));
 
-        Level lvl = Level.Load(
-            mapName, LevelInfo.MapPath($"games/{ModeName()}/{mapName}"));
+        string mapPath = $"games/{ModeName()}/{mapName}";
+
+        Level lvl = Level.LoadWithPath(mapName, mapPath);
         lvl.SaveChanges = false;
         lvl.name = name;
         map = lvl;
@@ -152,7 +177,6 @@ public abstract class Game {
     }
 
     public void Unload() {
-        Chat.MessageAll("unloaded");
         countdownTryNumber++;
         OnUnloadEvent();
         Games.Remove(map.name);
@@ -236,6 +260,7 @@ public abstract class Game {
                                    MouseAction action, ushort yaw, ushort pitch,
                                    byte entity, ushort x, ushort y, ushort z,
                                    TargetBlockFace face) {}
+    public void OnStartEvent() {}
 
     /// 0: already in game
     /// 1: cannot join game

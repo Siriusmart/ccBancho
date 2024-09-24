@@ -10,7 +10,7 @@ public sealed class Bancho : Plugin {
     public static IMongoCollection<BsonDocument> BanchoPlayers;
 
     public override int build {
-        get { return 2; }
+        get { return 3; }
     }
 
     public override string creator {

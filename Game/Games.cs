@@ -10,7 +10,12 @@ public class Games {
 
     public static void RegisterGame(Type g) {
         string name = (string)g.GetMethod("StaticModeName").Invoke(null, null);
+        string shortName =
+            (string)g.GetMethod("StaticShortName").Invoke(null, null);
         gameModes.Add(name, g);
+
+        if (shortName != null)
+            gameModes.Add(shortName, g);
     }
 
     public static void UnregisterGame(string name) { gameModes.Remove(name); }
@@ -25,7 +30,7 @@ public class Games {
             return null;
 
         foreach (Game g in games.Values) {
-            if (g.ModeName() == gamemode && g.CanJoin())
+            if ((g.ModeName() == gamemode || g.ShortName() == gamemode) && g.CanJoin())
                 return g;
         }
 

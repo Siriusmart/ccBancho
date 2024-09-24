@@ -14,7 +14,16 @@ Help command: `/chat`
 
 ![](./img/chat.png)
 
+## Friend
+
+Help command: `/friend`
+
+![](./img/friend.png)
+
 ## Usage
+
+> #### Custom server required
+> This plugin requires a tweaked version of MCGalaxy, the Git repo can be found [here](https://github.com/Siriusmart/MCGalaxy). It adds extra functions for Bancho to use, and does not break existing plugins.
 
 Download a [release](https://github.com/Siriusmart/ccBancho/releases) and copy all files to your server folder. Overwrite any old files if needed.
 
@@ -40,6 +49,7 @@ specs/\* contains the format of MongoDB documents.
 - [x] Party system
 - [x] Chat channels
 - [x] Broadcast scope
-- [ ] Friend system
+- [x] Friend system
 - [ ] Guilds
+- [ ] Player settings
 - [ ] Games framework
