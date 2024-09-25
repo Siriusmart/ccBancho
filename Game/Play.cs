@@ -10,7 +10,20 @@ public class GamePlay : Command {
 
     public override void Use(Player p, string message) {
         string[] args = message.SplitSpaces();
-        Games.FindGameToJoin(args[0]).Join(p);
+
+        if (!Games.HasGameMode(args[0])) {
+            p.Message("&cThat is not a valid gamemode!");
+            return;
+        }
+
+        Game game = Games.FindGameToJoin(args[0]);
+
+        if (game == null) {
+            p.Message("&cWe could not find a game to join.");
+            return;
+        }
+
+        game.Join(p);
     }
 
     public override void Help(Player p) {

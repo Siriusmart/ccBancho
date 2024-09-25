@@ -17,6 +17,18 @@ public class OnlinePlayers {
         players.Remove(p);
     }
 
+    public static void PlayerSpawn(Player p, ref Position pos, ref byte yaw,
+                                   ref byte pitch, bool respawning) {
+        OnlinePlayer player = GetPlayer(p);
+        if (player == null)
+            return;
+
+        if (player.game != null && p.level.name != player.game.Name) {
+            player.game.Disconnect(p);
+            player.game = Games.GetGame(p.level.name);
+        }
+    }
+
     public static void Init() {
         foreach (Player p in PlayerInfo.Online.Items) {
             players.Add(p, new OnlinePlayer(p));

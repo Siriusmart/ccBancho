@@ -12,15 +12,31 @@ public class Games {
         string name = (string)g.GetMethod("StaticModeName").Invoke(null, null);
         string shortName =
             (string)g.GetMethod("StaticShortName").Invoke(null, null);
-        gameModes.Add(name, g);
 
-        if (shortName != null)
-            gameModes.Add(shortName, g);
+        if (HasGameMode(name)) {
+            gameModes[name] = g;
+        } else {
+            gameModes.Add(name, g);
+        }
+
+        if (shortName != null) {
+            if (HasGameMode(shortName)) {
+                gameModes[shortName] = g;
+            } else {
+                gameModes.Add(shortName, g);
+            }
+        }
     }
 
     public static void UnregisterGame(string name) { gameModes.Remove(name); }
 
     public static bool HasGame(string id) { return games.ContainsKey(id); }
+    public static bool HasGameMode(string id) {
+        return gameModes.ContainsKey(id);
+    }
+    public static Game? GetGame(string id) {
+        return HasGame(id) ? games[id] : null;
+    }
 
     public static void Add(Game game) { games.Add(game.Map.name, game); }
     public static bool Remove(string id) { return games.Remove(id); }
@@ -30,7 +46,8 @@ public class Games {
             return null;
 
         foreach (Game g in games.Values) {
-            if ((g.ModeName() == gamemode || g.ShortName() == gamemode) && g.CanJoin())
+            if ((g.ModeName() == gamemode || g.ShortName() == gamemode) &&
+                g.CanJoin())
                 return g;
         }
 
@@ -42,8 +59,6 @@ public class Games {
         OnPlayerMoveEvent.Register(OnPlayerMove, Priority.Low);
         OnBlockChangingEvent.Register(OnBlockChanging, Priority.Low);
         OnPlayerClickEvent.Register(OnPlayerClick, Priority.Low);
-
-        RegisterGame(typeof(TestGame));
 
         Command.Register(new GamePlay());
     }
@@ -68,6 +83,13 @@ public class Games {
 
     public static void OnPlayerMove(Player p, Position next, byte yaw,
                                     byte pitch, ref bool cancel) {
+        if (games.ContainsKey(p.level.name))
+            games[p.level.name].OnPlayerMoveEvent(p, next, yaw, pitch,
+                                                  ref cancel);
+    }
+
+    public static void OnPlayerLeave(Player p, Position next, byte yaw,
+                                     byte pitch, ref bool cancel) {
         if (games.ContainsKey(p.level.name))
             games[p.level.name].OnPlayerMoveEvent(p, next, yaw, pitch,
                                                   ref cancel);

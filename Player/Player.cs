@@ -17,6 +17,7 @@ public class OnlinePlayer {
     public volatile Player lastMessagedBy = null;
     public volatile uint lastMessagedTime =
         0; // breaks at year 2106, but im not there around to find out
+    public volatile Game game = null;
 
     public Player player;
 
@@ -122,9 +123,11 @@ public class OnlinePlayer {
     public void Logout() {
         long now = DateTimeOffset.UtcNow.ToUnixTimeSeconds();
 
-        if (party != null) {
+        if (party != null)
             party.RegisterLogout();
-        }
+
+        if (game != null)
+            game.Disconnect(player);
 
         foreach (Player friendRequested in recievedRequests.Keys) {
             friendRequested.MessageLines(
