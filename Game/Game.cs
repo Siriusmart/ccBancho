@@ -114,8 +114,7 @@ public abstract class Game {
 
     private void CountdownStartTick(int duration) {
         if (CountdownTicks.Contains(duration)) {
-            MessageAll(
-                $"&eGame starting in {Formatter.Duration(duration, 3)}");
+            MessageAll($"&eGame starting in {Formatter.Duration(duration, 3)}");
 
             if (duration <= 3) {
                 SendCPEMessagePlayers(CpeMessageType.BigAnnouncement,
@@ -259,8 +258,6 @@ public abstract class Game {
 
         if (spectators.Remove(p)) {
             OnSpectatorToPlayerEvent(p);
-        } else {
-            OnPlayerJoinEvent(p);
         }
 
         return 2;
@@ -307,6 +304,7 @@ public abstract class Game {
 
     public virtual void OnPlayerJoinEvent(Player p) {}
     public virtual void OnSpectatorToPlayerEvent(Player p) {
+        OnSpectatorLeaveEvent(p);
         OnPlayerJoinEvent(p);
     }
     public virtual void OnSpectatorJoinEvent(Player p) {}
@@ -349,9 +347,13 @@ public abstract class Game {
         if (res != 2)
             return res;
 
+        if (player.game != null)
+            player.game.Disconnect(p);
+
         player.game = this;
 
         PlayerActions.ChangeMap(p, map);
+        OnPlayerJoinEvent(p);
         CountdownUpdateRequest();
         return res;
     }
